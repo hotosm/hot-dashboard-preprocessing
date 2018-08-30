@@ -1,4 +1,4 @@
-import Papa           from 'papaparse';
+import Baby           from 'babyparse'
 import CONFIG from "../external/Constants";
 
 class Reader {
@@ -6,20 +6,34 @@ class Reader {
     this.getCsv   = this.getCsv.bind(this);
     this.getJson   = this.getJson.bind(this);
     this.getJsonFromAWS  = this.getJsonFromAWS.bind(this);
+    this.jquery = null;
+  }
+
+  set$($) {
+    this.jquery = $;
   }
 
   /** Get the CSV datas **/
   getCsv(url, callback) {
     return new Promise((resolve, reject) => {
-      Papa.parse(url, {
-        download      : true,
-        header        : true,
-        dynamicTyping : true,
-        complete      : (results) => {
-          resolve(callback(results));
+      this.jquery.ajax({
+        url: url,
+        data: {},
+        success: function( data ) {
+          Baby.parse(data, {
+            download      : false,
+            header        : true,
+            dynamicTyping : true,
+            complete      : (results) => {
+              resolve(callback(results));
+            },
+            error         : (error) => {
+              reject(error);
+            }
+          });
         },
-        error         : (error) => {
-          reject(error);
+        error: function (d) {
+          console.error("e", d);
         }
       });
     });
@@ -30,8 +44,16 @@ class Reader {
     if(config.link) {
       const url = config.link;
       const name = config.name;
-      return fetch(url)
-          .then((Response) => Response.json())
+      return this.jquery.ajax({
+        url: url,
+        data: {},
+        success: function( data ) {
+          return data.json();
+        },
+        error: function (d) {
+          console.error("e", d);
+        }
+      })
           .then((findResponse) => {
             return this.getPropByString(findResponse, name);
           });

@@ -5,7 +5,8 @@
   "dependencies": {
     "@material-ui/core": "^1.5.1",
     "@material-ui/icons": "^2.0.3",
-    "papaparse": "^4.6.0",
+    "babyparse": "^0.4.6",
+    "jquery": "^3.3.1",
     "react": "^16.4.2",
     "react-buttons": "0.0.11",
     "react-dom": "^16.4.2",
@@ -15,7 +16,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:preprocess": "babel src/core -d dist-preprocess",
+    "run:preprocess": "node dist-preprocess/scripts/Preprocess.js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-async-functions": "^6.22.0"
   }
 }

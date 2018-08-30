@@ -60,7 +60,7 @@ class MainContent extends Component {
 
               {/* Map edits */}
               <Grid item xs={12} sm={6} md={3}>
-                {this.props.importedIndicators.global && (<WidgetIndicator title="Map edits" img={mapIMG} data={this.props.importedIndicators.global.main.totalMappers}/>)}
+                {this.props.importedIndicators.global && (<WidgetIndicator title="Total mappers" img={mapIMG} data={this.props.importedIndicators.global.main.totalMappers}/>)}
               </Grid>
 
               {/* Mapathons */}

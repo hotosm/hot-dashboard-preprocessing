@@ -7,11 +7,12 @@ import Reader   from '../utils/Reader';
 const reader = new Reader();
 
 class PreProcessor {
-  constructor() {
+  constructor($=null) {
     this.getAllDatas = this.getAllDatas.bind(this);
     this.getDataFromProjects = this.getDataFromProjects.bind(this);
     this.getProjectsFromAPI = this.getProjectsFromAPI.bind(this);
     this.getDataFromProjectsFile = this.getDataFromProjectsFile.bind(this);
+    reader.set$($);
   }
 
   //------------------------------------------------------------------------//

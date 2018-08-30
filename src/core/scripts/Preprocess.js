@@ -3,12 +3,14 @@ import Global from "../preprocessor/Global";
 import RamaniHuria from "../preprocessor/RamaniHuria";
 import ProjectTest from "../preprocessor/ProjectTest";
 import Writer from "../utils/Writer";
+import jsdom from 'jsdom';
 
 const writer = new Writer();
 
 class Preprocess {
-  constructor() {
-    this.preProcessingService = new preProcessingService();
+  constructor($=null) {
+    this.preProcessingService = new preProcessingService($);
+    writer.setJquery($);
   }
 
   async process() {
@@ -65,7 +67,17 @@ class Preprocess {
 
     let res = {};
     res.projects = projectsFromAPI;
+    console.log("res", dataFromAPI);
     return res;
   }
 }
+jsdom.env("", (err, window) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+
+  var $ = require("jquery")(window);
+  new Preprocess($).process();
+});
 export default Preprocess;

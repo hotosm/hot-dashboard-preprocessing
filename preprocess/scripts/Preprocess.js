@@ -27,7 +27,7 @@ class Preprocess {
     // 2. Get the indicators
     try {
       for (let i = 0; i < projectsFromAPI.length; i++) {
-        dataFromAPI[projectsFromAPI[i].projectname] = await
+        dataFromAPI[projectsFromAPI[i]["project name"]] = await
             this.preProcessingService.getDataFromProjects(projectsFromAPI, i);
       }
     } catch (e) {
@@ -64,10 +64,6 @@ class Preprocess {
     catch (e) {
       console.error('Writing the json file failed', e)
     }
-
-    let res = {};
-    res.projects = projectsFromAPI;
-    return res;
   }
 }
 jsdom.env("", (err, window) => {

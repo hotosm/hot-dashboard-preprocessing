@@ -3,8 +3,9 @@ import AbstractProject from './AbstractProject'
 class RamaniHuria extends AbstractProject{
   constructor(generalData) {
     super(generalData);
-    this.functions.push("getPeopleTrained");
-    this.functions.push("getPeopleTrainedMonthly");
+    // this.functions.push("getPeopleTrained");
+    // this.functions.push("getPeopleTrainedMonthly");
+    this.functions.push("getAttendeesAndInstitutions");
   }
 
   process() {
@@ -13,6 +14,56 @@ class RamaniHuria extends AbstractProject{
       this[this.functions[i]](this.data);
     }
     return this.data;
+  }
+
+  /** Get the number of attendees and of institutions trained during the workshops (by month) **/
+  getAttendeesAndInstitutions(data) {
+    let attendees = data.capacitybuilding.nbattendees;
+    let attendeesArray = [];
+    let exist = false;
+    for (let i = 0; i < attendees.length; i++) {
+      let date = (new Date(attendees[i]["End date"]));
+      // This loop is here to add the row in the right array cell in order to have a descending order
+      for (let j = 0; j < attendeesArray.length && !exist; j++) {
+        // If the date of the current row is greater (newer) than the item in the array
+        if (date.getFullYear() > attendeesArray[j].date.getFullYear() || (date.getMonth() > attendeesArray[j].date.getMonth() && attendeesArray[j].date.getFullYear() === date.getFullYear())) {
+          let attendeesTemp = [];
+          attendeesTemp.push({
+            date : date,
+            label : date.toUTCString().split(" ", 3)[2]+" "+date.toUTCString().split(" ", 4)[3],
+            nbAttendees: attendees[i]["Number attendees"],
+            nbInstitutions: attendees[i]["Number institutions"],
+          });
+          let res = [];
+          res = attendeesArray.splice(0, j);
+          res = res.concat(attendeesTemp);
+          res = res.concat(attendeesArray);
+          attendeesArray = res;
+          exist = true;
+        }
+        // If the date of the current row is equal to the date of the item in the array
+        else if (attendeesArray[j].date.getMonth() === date.getMonth() && attendeesArray[j].date.getFullYear() === date.getFullYear()) {
+          attendeesArray[j].nbAttendees += attendees[i]["Number attendees"];
+          attendeesArray[j].nbInstitutions += attendees[i]["Number institutions"];
+          exist = true;
+        }
+      }
+      // Otherwise, the current row is lower (older) than the last item of the array
+      if(!exist) {
+        attendeesArray.push({
+          date : date,
+          label : date.toUTCString().split(" ", 3)[2]+" "+date.toUTCString().split(" ", 4)[3],
+          nbAttendees: attendees[i]["Number attendees"],
+          nbInstitutions: attendees[i]["Number institutions"],
+        });
+      }
+      else {
+        exist = false;
+      }
+    }
+    // We store the data calculated in the data stored on the rawdata
+    data.capacitybuilding["attendeesAndInstitutions"] = attendeesArray;
+    return data;
   }
 
   /** Get the number of people trained by gender and in total **/

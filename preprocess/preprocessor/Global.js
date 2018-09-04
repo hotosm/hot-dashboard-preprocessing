@@ -6,6 +6,8 @@ class Global extends AbstractProject{
     this.functions.push("getUsageOfHotData");
     this.functions.push("getTotalMapathons");
     this.functions.push("getTotalTrainings");
+    this.functions.push("getTotalAttendeesAndInstitutions");
+    this.functions.push("getTotalMapEdits");
   }
 
   process() {
@@ -90,10 +92,78 @@ class Global extends AbstractProject{
     }
     generalData.global.capacitybuilding["monthlyDivision"] = totalMonthlyDivision;
     generalData.global.capacitybuilding["trainings"] = {
-          total: totalTrainings,
-          men: totalTrainingsMen,
-          women: totalTrainingsWomen
-        };
+      total: totalTrainings,
+      men: totalTrainingsMen,
+      women: totalTrainingsWomen
+    };
+    return generalData;
+  }
+
+  /** Get the number of people and organizations trained during the workshops **/
+  getTotalAttendeesAndInstitutions(generalData) {
+    let projectName = "";
+    let totalAttendees = [];
+    //We're going through every project except global which is this one
+    for (let i = 0; i < Object.keys(generalData).length; i++) {
+      projectName = Object.keys(generalData)[i];
+      if (projectName !== "global") {
+        for (let j = 0; j < Object.keys(generalData[projectName]).length; j++) {
+          let subProject = Object.keys(generalData[projectName])[j];
+          if (Object.keys(generalData[projectName][subProject]).includes("attendeesAndInstitutions")) {
+            let divisionKeys = generalData[projectName][subProject].attendeesAndInstitutions;
+            let exist = false;
+            // This loop is here to add the row in the right array cell in order to have a descending order
+            for (let k = 0; k < divisionKeys.length; k++) {
+              for (let l = 0; l < totalAttendees.length && !exist; l++) {
+                // If the date of the current row is greater (newer) than the item in the array
+                if (divisionKeys[k].date.getFullYear() > totalAttendees[l].date.getFullYear() || (divisionKeys[k].date.getMonth() > totalAttendees[l].date.getFullYear() && totalAttendees[l].date.getFullYear() === divisionKeys[k].date.getFullYear())) {
+                  let res = [];
+                  res.push(totalAttendees.splice(0, j));
+                  res = res.concat(divisionKeys[k]);
+                  res = res.concat(totalAttendees);
+                  totalAttendees = res;
+                  exist = true;
+                }
+                // If the date of the current row is equal to the date of the item in the array
+                else if (divisionKeys[k].date.getMonth() === totalAttendees[l].date.getMonth() && divisionKeys[k].date.getFullYear() === totalAttendees[l].date.getFullYear()) {
+                  totalAttendees[l].nbAttendees += divisionKeys[k]["Number attendees"];
+                  totalAttendees[l].nbInstitutions += divisionKeys[k]["Number institutions"];
+                  exist = true;
+                }
+              }
+              // Otherwise, the current row is lower (older) than the last item of the array
+              if (!exist) {
+                totalAttendees.push(divisionKeys[k]);
+              }
+              else {
+                exist = false;
+              }
+            }
+          }
+        }
+      }
+    }
+    generalData.global.capacitybuilding["attendeesAndInstitutions"] = totalAttendees;
+    return generalData;
+  }
+
+  /** Get the number of map edits **/
+  getTotalMapEdits(generalData) {
+    let totalEdits = 0;
+    let projectName = "";
+    //We're going through every project except global which is this one
+    for (let i = 0; i < Object.keys(generalData).length; i++) {
+      projectName = Object.keys(generalData)[i];
+      if (projectName !== "global") {
+        for (let j = 0; j < Object.keys(generalData[projectName]).length; j++) {
+          let subProject = Object.keys(generalData[projectName])[j];
+          if (Object.keys(generalData[projectName][subProject]).includes("edits")) {
+            totalEdits += generalData[projectName][subProject].edits;
+          }
+        }
+      }
+    }
+    generalData.global.main["edits"] = totalEdits;
     return generalData;
   }
 }

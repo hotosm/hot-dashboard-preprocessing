@@ -93,6 +93,7 @@ class PreProcessor {
             generalData.awareness[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;
             break;
           case "capacitybuilding":
+          case "capacity building" :
             generalData.capacitybuilding[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;
             break;
           default:

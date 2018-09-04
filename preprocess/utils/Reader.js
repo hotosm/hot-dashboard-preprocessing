@@ -1,11 +1,9 @@
-import Baby           from 'babyparse'
-import CONFIG from "../external/Constants";
+import Baby           from 'babyparse';
 
 class Reader {
   constructor() {
     this.getCsv   = this.getCsv.bind(this);
     this.getJson   = this.getJson.bind(this);
-    this.getJsonFromAWS  = this.getJsonFromAWS.bind(this);
     this.jquery = null;
   }
 

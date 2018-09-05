@@ -9,6 +9,9 @@
 # production
 /build
 
+# lambda function build
+/dist-preprocess
+
 # misc
 .DS_Store
 .env.local

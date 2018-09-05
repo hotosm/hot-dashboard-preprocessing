@@ -5,7 +5,12 @@ import ProjectTest from "../preprocessor/ProjectTest";
 import Writer from "../utils/Writer";
 import jsdom from 'jsdom';
 
+// This is used to call the Writer anywhere (it's used to post data to the AWS bucket)
 const writer = new Writer();
+const { JSDOM } = jsdom;
+const { window } = new JSDOM();
+const { document } = (new JSDOM('')).window;
+global.document = document;
 
 class Preprocess {
   constructor($=null) {
@@ -38,7 +43,7 @@ class Preprocess {
     try {
       let project = {};
       for (let i = 0; i < projectsFromAPI.length; i++) {
-        switch (projectsFromAPI[i].projectname.toLowerCase()) {
+        switch (projectsFromAPI[i]["project name"].toLowerCase()) {
           case "ramanihuria":
             project = new RamaniHuria(dataFromAPI.ramanihuria);
             dataFromAPI.ramanihuria = project.process();
@@ -66,13 +71,14 @@ class Preprocess {
     }
   }
 }
-jsdom.env("", (err, window) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
 
-  var $ = require("jquery")(window);
-  new Preprocess($).process();
-});
-export default Preprocess;
+exports.default = function(event, context, callback) {
+  try {
+    var $ = require("jquery")(window);
+    new Preprocess($).process();
+    callback(null, "The file rawdata.json was sucessfully updated !");
+  }
+  catch (e) {
+    console.error("There was an error during the execution of the lambda function", e)
+  }
+};

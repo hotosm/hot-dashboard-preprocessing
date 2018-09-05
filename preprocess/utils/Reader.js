@@ -30,8 +30,8 @@ class Reader {
             }
           });
         },
-        error: function (d) {
-          console.error("e", d);
+        error: function (e) {
+          console.error("getCsv error: ", e);
         }
       });
     });
@@ -46,10 +46,10 @@ class Reader {
         url: url,
         data: {},
         success: function( data ) {
-          return data.json();
+          return data;
         },
-        error: function (d) {
-          console.error("e", d);
+        error: function (e) {
+          console.error("GetJson error: ", e);
         }
       })
           .then((findResponse) => {
@@ -67,8 +67,11 @@ class Reader {
     if (!propertyString)
       return null;
 
+    // Babyparse often returns a string instead of a JSON object
+    if (typeof object === 'string') {
+      object = JSON.parse(object);
+    }
     var prop, props = propertyString.split('.');
-
     for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
       prop = props[i];
 
@@ -79,7 +82,7 @@ class Reader {
         break;
       }
     }
-    return object[props[i]]; // return you object with
+    return object[props[i]]; // return you value requested in the parameter "propertyString"
   }
 }
 

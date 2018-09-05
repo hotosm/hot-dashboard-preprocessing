@@ -35,7 +35,7 @@ class PreProcessor {
   /** Initilize the data received from the API **/
   getDataFromProjects(projectSource, i){
     return new Promise((resolve,reject) => {
-      reader.getCsv(projectSource[i].configfileurl, this.getAllDatas)
+      reader.getCsv(projectSource[i]["config file url"], this.getAllDatas)
           .then((allDatasFromAPIwithLinks) =>{
             resolve(allDatasFromAPIwithLinks);
           })
@@ -59,7 +59,6 @@ class PreProcessor {
 
   /** Update all datas to the 'allDatasFromAPIwithLinks' value **/
   async getAllDatas(result){
-    // console.log(result.data);
     const allDatasFromAPIwithLinks = result.data;
     let generalData = {
       main: {},
@@ -72,19 +71,24 @@ class PreProcessor {
 
       // Control if the 'link' attribute in the object is not undefined
       if (allDatasFromAPIwithLinks[i].link !== undefined) {
-        let dataGeneratedWithLink = undefined;
+        let dataGeneratedWithLink = {
+          data: undefined,
+          title: ""
+        };
         switch (allDatasFromAPIwithLinks[i].type.toLowerCase()) {
           // If there is a JSON file or if it is an API
           case "api":
           case "json":
-            dataGeneratedWithLink = await reader.getJson(allDatasFromAPIwithLinks[i]);
+            dataGeneratedWithLink.data = await reader.getJson(allDatasFromAPIwithLinks[i]);
             break;
           // If there is a csv file
           case "csv":
-            dataGeneratedWithLink = await reader.getCsv(allDatasFromAPIwithLinks[i].link, (result) => result.data);
+            dataGeneratedWithLink.data = await reader.getCsv(allDatasFromAPIwithLinks[i].link, (result) => result.data);
             break;
           default:
         }
+        // Associate the title to data of the widget which will be displayed
+        dataGeneratedWithLink.title = allDatasFromAPIwithLinks[i].title;
         switch (allDatasFromAPIwithLinks[i].category.toLowerCase()) {
           case "mapping":
             generalData.main[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;

@@ -4,7 +4,7 @@ Hot-dashboard
 ## Install
 
 ## Run 
-expliquer les commandes du package.json
+<!--  expliquer les commandes du package.json -->
 
 ## Dependencies
 
@@ -14,6 +14,6 @@ expliquer les commandes du package.json
 - jquery
 
 ### Babel
-expliquer l'installation et run
+<!--  expliquer l'installation et run -->
 
 ### ....

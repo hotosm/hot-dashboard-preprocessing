@@ -63,7 +63,8 @@ class PreProcessor {
     let generalData = {
       main: {},
       capacitybuilding: {},
-      awareness: {}
+      awareness: {},
+      mappingcommunity: {}
     }; // Array of data with all the indicators we want
 
     // For each little objects on the big object
@@ -91,14 +92,17 @@ class PreProcessor {
         dataGeneratedWithLink.title = allDatasFromAPIwithLinks[i].title;
         switch (allDatasFromAPIwithLinks[i].category.toLowerCase()) {
           case "mapping":
+            console.log("data : ", dataGeneratedWithLink);
             generalData.main[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;
             break;
           case "awareness":
             generalData.awareness[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;
             break;
-          case "capacitybuilding":
           case "capacity building" :
             generalData.capacitybuilding[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;
+            break;
+          case "mapping community" :
+            generalData.mappingcommunity[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;
             break;
           default:
         }

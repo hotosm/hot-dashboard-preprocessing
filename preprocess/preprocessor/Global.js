@@ -25,15 +25,18 @@ class Global extends AbstractProject{
     };
 
     let usageOfHotData = {};
-    /**
-     * TODO
-     * find the oldest row and newest (or current date ?) instead of 2014 and 2018
-     * rename the variable in order to have say the 6 last years with data or so
-     */
-    for (let i = 2014; i <= 2018; i++) {
+    let yearMax = (new Date().getFullYear());
+    let yearMin = yearMax;
+    data.global.mappingcommunity.totalEvents.data.filter(function(row) {
+      let rowYear = (new Date(row.date).getFullYear());
+      if (rowYear<yearMin) {
+        yearMin = rowYear;
+      }
+    });
+    for (; yearMin <= yearMax; yearMin++) {
       // Each year will be a set of data, every event has a date so each year will store the number of event (mapathon) that took place this year
-      usageOfHotData["data"+i] = data.global.awareness.totalEvents.data
-          .filter(row => row.date && row.date.match(getYearPattern(i))).length;
+      usageOfHotData[yearMax-yearMin] = data.global.mappingcommunity.totalEvents.data
+          .filter(row => row.date && row.date.match(getYearPattern(yearMin))).length;
     }
     data.global.main["usageOfHotData"] = usageOfHotData;
     return data;
@@ -114,8 +117,8 @@ class Global extends AbstractProject{
   getTotalMapathons(data) {
     let totalMapathons = {
       // Each event is a mapathon so the number of mapathons is the length of the array of events
-      data : data.global.awareness.totalEvents.data.length,
-      title : data.global.awareness.totalEvents.title
+      data : data.global.mappingcommunity.totalEvents.data.length,
+      title : data.global.mappingcommunity.totalEvents.title
     };
     data.global.main["totalMapathons"] = totalMapathons;
     return data;
@@ -257,8 +260,8 @@ class Global extends AbstractProject{
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("edits")) {
-            totalEdits += data[projectName][subProject].edits.data;
+          if (Object.keys(data[projectName][subProject]).includes("nbedits")) {
+            totalEdits += data[projectName][subProject].nbedits.data;
           }
         }
       }

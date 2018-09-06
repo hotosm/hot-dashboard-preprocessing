@@ -6,24 +6,28 @@ class RamaniHuria extends AbstractProject{
     super(generalData);
     // this.functions.push("getPeopleTrained");
     // this.functions.push("getPeopleTrainedMonthly");
-    this.functions.push("getAttendeesAndInstitutions");
+    this.functions.push("getNbAttendeesMonthly");
   }
 
   /**
-   * Get the number of attendees and of institutions trained during the workshops (by month)
+   * Get the number of attendees and of institutions trained during the workshops and aggregate it by month
    * @param data - the data fetched by the reader
-   * @returns {object} The data with the attribute "attendeesAndInstitutions" containing the data for the 3 indicators : number of people and institutions trained and the number of workshops
-   * The advantage to have an descending array allow us to display the last 6 months or the last 3 months if we want
+   * @returns {object} The data with the attribute "nbAttendeesMonthly" containing the data for the corresponding indicator : number workshops attendees per month
+   * The advantage to have an descending array allow us to display the last 6 months or the last 3 months according to our needs
    */
-  getAttendeesAndInstitutions(data) {
+  getNbAttendeesMonthly(data) {
+    const nbAttendees = "Number attendees";
+    const nbInstitutions = "Number institutions";
+    const endDate = "End date";
+
     // Because we know the data is the same for the three indicators, we will only use this one
-    let attendees = data.capacitybuilding.nbattendees.data;
+    let attendees = data.capacitybuilding.nbattendeesmonthly.data;
     // This array will hold the final data
     let attendeesArray = [];
     // This variable will be used when data is inserted in the array
     let exist = false;
     for (let i = 0; i < attendees.length; i++) {
-      let date = (new Date(attendees[i]["End date"]));
+      let date = (new Date(attendees[i][endDate]));
       // This loop is here to add the row in the right array cell in order to have a descending order
       for (let j = 0; j < attendeesArray.length && !exist; j++) {
         // If the date of the current row is greater (newer) than the item in the array (year greater or same yeah but month greater)
@@ -33,8 +37,8 @@ class RamaniHuria extends AbstractProject{
           attendeesTemp.push({
             date : date,
             label : date.toUTCString().split(" ", 3)[2]+" "+date.toUTCString().split(" ", 4)[3],
-            nbAttendees: attendees[i]["Number attendees"],
-            nbInstitutions: attendees[i]["Number institutions"],
+            nbAttendees: attendees[i][nbAttendees],
+            nbInstitutions: attendees[i][nbInstitutions],
           });
           // This array will store the ordered data
           let res = [];
@@ -47,8 +51,8 @@ class RamaniHuria extends AbstractProject{
         // If the date of the current row is equal to the date of the item in the array (month and year because it's filtered this way)
         else if (attendeesArray[j].date.getMonth() === date.getMonth() && attendeesArray[j].date.getFullYear() === date.getFullYear()) {
           // We update the values of the data
-          attendeesArray[j].nbAttendees += attendees[i]["Number attendees"];
-          attendeesArray[j].nbInstitutions += attendees[i]["Number institutions"];
+          attendeesArray[j].nbAttendees += attendees[i][nbAttendees];
+          attendeesArray[j].nbInstitutions += attendees[i][nbInstitutions];
           exist = true;
         }
       }
@@ -58,8 +62,8 @@ class RamaniHuria extends AbstractProject{
         attendeesArray.push({
           date : date,
           label : date.toUTCString().split(" ", 3)[2]+" "+date.toUTCString().split(" ", 4)[3],
-          nbAttendees: attendees[i]["Number attendees"],
-          nbInstitutions: attendees[i]["Number institutions"],
+          nbAttendees: attendees[i][nbAttendees],
+          nbInstitutions: attendees[i][nbInstitutions],
         });
       }
       else {
@@ -67,15 +71,12 @@ class RamaniHuria extends AbstractProject{
       }
     }
     // This will be the final data stored in the json file
-    let attendeesAndInstitutions = {
-      titleWorkshop     : data.capacitybuilding.nbWorkshops.title,
-      titleAttendees    : data.capacitybuilding.nbattendees.title,
-      titleInstitutions : data.capacitybuilding.nbinstitutions.title,
-      workshops         : attendees.length,
+    let nbAttendeesMonthly = {
+      title    : data.capacitybuilding.nbattendeesmonthly.title,
       data              : attendeesArray
     };
     // We store the data calculated in the global data
-    data.capacitybuilding["attendeesAndInstitutions"] = attendeesAndInstitutions;
+    data.capacitybuilding["nbAttendeesMonthly"] = nbAttendeesMonthly;
     return data;
   }
 

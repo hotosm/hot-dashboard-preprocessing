@@ -7,6 +7,11 @@ class RamaniHuria extends AbstractProject{
     // this.functions.push("getPeopleTrained");
     // this.functions.push("getPeopleTrainedMonthly");
     this.functions.push("getNbAttendeesMonthly");
+    this.functions.push("getNbAttendeesInstitutions");
+    this.functions.push("getNbAttendeesTraining");
+    this.functions.push("getNbWorkshops");
+    this.functions.push("getNbEvents");
+    this.functions.push("getNbParticipants");
   }
 
   /**
@@ -20,7 +25,6 @@ class RamaniHuria extends AbstractProject{
     const nbInstitutions = "Number institutions";
     const endDate = "End date";
 
-    // Because we know the data is the same for the three indicators, we will only use this one
     let attendees = data.capacitybuilding.nbattendeesmonthly.data;
     // This array will hold the final data
     let attendeesArray = [];
@@ -77,92 +81,277 @@ class RamaniHuria extends AbstractProject{
     };
     // We store the data calculated in the global data
     data.capacitybuilding["nbAttendeesMonthly"] = nbAttendeesMonthly;
+    delete data.capacitybuilding.nbattendeesmonthly;
     return data;
   }
 
-  // /** Get the number of people trained by gender and in total **/
-  // getPeopleTrained(data) {
-  //   let nbPeopleTrained = data.capacitybuilding.nbtrainings;
-  //   let genderDivisionMen = 0;
-  //   let genderDivisionWomen = 0;
-  //   for (let i = 0; i < nbPeopleTrained.length; i++) {
-  //     genderDivisionMen += nbPeopleTrained[i].male;
-  //     genderDivisionWomen += nbPeopleTrained[i].female;
-  //   }
-  //   data.capacitybuilding["trainings"] = {
-  //     men: genderDivisionMen,
-  //     women: genderDivisionWomen,
-  //     total: genderDivisionMen+genderDivisionWomen
-  //   };
-  //   return data;
-  // }
-  //
-  // /** Get the number of people trained monthly */
-  // getPeopleTrainedMonthly(data) {
-  //   let nbPeopleTrained = data.capacitybuilding.nbtrainings;
-  //   let getYearPattern = (month, year) => {
-  //     return new RegExp('([0-9]{2})/' + month + '/' + year);   // French date format
-  //   };
-  //   const currentDate = (new Date());
-  //   const currentYear = currentDate.getFullYear();
-  //   const currentMonth = currentDate.getMonth();
-  //   let lastMonth = currentMonth;
-  //   let lastYear = currentYear;
-  //   let monthlyDivisionData = {};
-  //   let counter = 0;
-  //   for (let i = currentYear; i >= 2014 && counter < 12; i--) {
-  //     let maxMonth = (i === currentYear) ? currentMonth + 1 : 12;
-  //     for (let j = maxMonth; j >= 1 && counter < 12; j--) {
-  //       let month = "";
-  //       if (j <= 9)
-  //         month = "0" + j;
-  //       else
-  //         month = j;
-  //       let nbPeopleTrainedAMonth = nbPeopleTrained.filter(row => row.male !== 0 && row.date.match(getYearPattern(month, i)));
-  //       let tabSize = nbPeopleTrainedAMonth.length;
-  //       if (tabSize > 0) {
-  //         let nbPerMonth = 0;
-  //         while (tabSize > 0) {
-  //           nbPerMonth += nbPeopleTrainedAMonth[tabSize - 1]["#people trained"];
-  //           tabSize--;
-  //         }
-  //         monthlyDivisionData["data" + (12 - counter)] = {
-  //           "label": month + "/" + i,
-  //           "value": nbPerMonth
-  //         };
-  //         lastMonth = month;
-  //         lastYear = i;
-  //         counter++;
-  //       }
-  //     }
-  //   }
-  //   //In case there is not enough data, generation of empty months
-  //   let month = lastMonth - 1;
-  //   while (counter < 12) {
-  //     if (month <= 9) {
-  //       lastMonth = "0" + month;
-  //     }
-  //     else {
-  //       lastMonth = month;
-  //     }
-  //     monthlyDivisionData["data" + (12 - counter)] = {
-  //       "label": lastMonth + "/" + lastYear,
-  //       "value": 0
-  //     };
-  //     month--;
-  //     if (month <= 0) {
-  //       lastYear--;
-  //       month = 12;
-  //     }
-  //     counter++;
-  //   }
-  //
-  //   data.capacitybuilding["monthlyDivision"] = {
-  //     data : monthlyDivisionData,
-  //     title : "Monthly training (last 6 months)"
-  //   };
-  //   return data;
-  // }
+  /**
+   * Get the number of attendees trained during the workshops and aggregate it by institutions
+   * @param data - the data fetched by the reader
+   * @returns {object} The data with the attribute "nbAttendeesMonthly" containing the data for the corresponding indicator : number workshops attendees per institutions
+   */
+  getNbAttendeesInstitutions(data) {
+    let nbAttendeesInstitutionsFromData = data.capacitybuilding.nbattendeesinstitutions;
+    let nbAttendeesInstitutions = {
+      title: nbAttendeesInstitutionsFromData.title,
+      data: [
+        {
+          label: "University of Dar es Salaam and Ardhi University",
+          shorten: "DSAU",
+          nbAttendees : 0
+        },
+        {
+          label: "WB Consultants",
+          shorten: "WB",
+          nbAttendees : 0
+        },
+        {
+          label: "Red Cross",
+          shorten: "RC",
+          nbAttendees : 0
+        },
+        {
+          label: "Municipal Councils representative",
+          shorten: "MCR",
+          nbAttendees : 0
+        },
+        {
+          label: "City Council Representatives",
+          shorten: "CCR",
+          nbAttendees : 0
+        },
+        {
+          label: "National Bureau of Statistics",
+          shorten: "NBS",
+          nbAttendees : 0
+        },
+        {
+          label: "Energy and Water Utility Regulatory Authority",
+          shorten: "EWA",
+          nbAttendees : 0
+        },
+        {
+          label: "Ministry of Health",
+          shorten: "MoH",
+          nbAttendees : 0
+        },
+        {
+          label: "Ministry of Water (DAWASA & DAWASCO)",
+          shorten: "MoW",
+          nbAttendees : 0
+        },
+        {
+          label: "Tanzania Petroleum Development Corporation",
+          shorten: "TPDC",
+          nbAttendees : 0
+        },
+        {
+          label: "Commission of Science and Technology",
+          shorten: "CST",
+          nbAttendees : 0
+        },
+        {
+          label: "Local Government Authority (LGA) leaders",
+          shorten: "LGA",
+          nbAttendees : 0
+        },
+        {
+          label: "Community members",
+          shorten: "CM",
+          nbAttendees : 0
+        }
+      ]
+    };
+    for (let i = 0; i < nbAttendeesInstitutionsFromData.data.length; i++) {
+      for (let j = 0; j < nbAttendeesInstitutions.data.length; j++) {
+        nbAttendeesInstitutions.data[j].nbAttendees += nbAttendeesInstitutionsFromData.data[i][nbAttendeesInstitutions.data[j].label];
+      }
+    }
+    // We store the data calculated in the global data
+    data.capacitybuilding["nbAttendeesInstitutions"] = nbAttendeesInstitutions;
+    delete data.capacitybuilding.nbattendeesinstitutions;
+    return data;
+  }
+
+  /**
+   * Get the number of attendees trained during the workshops and aggregate it by type of trainings
+   * @param data - the data fetched by the reader
+   * @returns {object} The data with the attribute "nbAttendeesTraining" containing the data for the corresponding indicator : number workshops attendees per training type
+   */
+  getNbAttendeesTraining(data) {
+    const nbAttendees = "Number attendees";
+    let nbAttendeesTrainingFromData = data.capacitybuilding.nbattendeestraining.data;
+    let nbAttendeesTraining = {
+      title: data.capacitybuilding.nbattendeestraining.title,
+      data: [
+        {
+          extend: "Drainage mapping",
+          label: "Drainage",
+          value : 0
+        },
+        {
+          extend: "OSM",
+          label: "OSM",
+          value : 0
+        },
+        {
+          extend: "ODK Form Management and Data Collection",
+          label: "ODK",
+          value : 0
+        },
+        {
+          extend: "OsmAnd application and Map Reading",
+          label: "Osm",
+          value : 0
+        }
+      ]
+    };
+    for (let i = 0; i < nbAttendeesTrainingFromData.length; i++) {
+      for (let j = 0; j < nbAttendeesTraining.data.length; j++) {
+        if (nbAttendeesTrainingFromData[i][nbAttendeesTraining.data[j].extend] !== 0) {
+          nbAttendeesTraining.data[j].value += nbAttendeesTrainingFromData[i][nbAttendees];
+        }
+      }
+    }
+    // We store the data calculated in the global data
+    data.capacitybuilding["nbAttendeesTraining"] = nbAttendeesTraining;
+    delete data.capacitybuilding.nbattendeestraining;
+    return data;
+  }
+
+  /**
+   * Get the number of workshops and aggregate it by month
+   * @param data - the data fetched by the reader
+   * @returns {object} The data with the attribute "nbWorkshopsMonthly" containing the data for the corresponding indicator : number of technical workshops per month
+   * The advantage to have an descending array allow us to display the last 6 months or the last 3 months according to our needs
+   */
+  getNbWorkshops(data) {
+    const endDate = "End date";
+    let yearMax = (new Date().getFullYear());
+    let currentMonth = (new Date().getMonth());
+    let yearMin = yearMax;
+    let nbWorkshops = [];
+    data.capacitybuilding.nbworkshops.data.filter(function(row) {
+      let rowYear = (new Date(row[endDate]).getFullYear());
+      if (rowYear<yearMin) {
+        yearMin = rowYear;
+      }
+    });
+    let counter = 0;
+    for (; yearMax >= yearMin; yearMax--) {
+      let month = 11;
+      if (yearMax === yearMin) {
+        month = currentMonth;
+      }
+      for (; month >= 0; month--) {
+        let nbWorkshopsFiltered = data.capacitybuilding.nbworkshops.data
+            .filter(row => row[endDate] && (new Date(row[endDate]).getFullYear()) === yearMax && (new Date(row[endDate]).getMonth()) === month);
+        if (nbWorkshopsFiltered.length > 0) {
+          nbWorkshops[counter] =
+              {
+                value: nbWorkshopsFiltered.length,
+                label: (new Date(nbWorkshopsFiltered[0][endDate])).toUTCString().split(" ", 3)[2]+" "+(new Date(nbWorkshopsFiltered[0][endDate])).toUTCString().split(" ", 4)[3]
+              };
+          counter++;
+        }
+      }
+    }
+    let nbWorkshopsStored = {
+      title: data.capacitybuilding.nbworkshops.title,
+      data: nbWorkshops
+    };
+    // We store the data calculated in the global data
+    data.capacitybuilding["nbWorkshops"] = nbWorkshopsStored;
+    delete data.capacitybuilding.nbworkshops;
+    return data;
+  }
+
+  /**
+   * Get the number of events conducted
+   * @param data - the data fetched by the reader
+   * @returns {object} The data with the attribute "nbEvents" containing the data for the corresponding indicator and the title
+   */
+  getNbEvents(data) {
+    // We store the data calculated in the global data
+    data.mappingcommunity["nbEvents"] = {
+      title: data.mappingcommunity.nbevents.title,
+      data: data.mappingcommunity.nbevents.data.filter(row => row["No."] !== "").length
+    };
+    delete data.mappingcommunity.nbevents;
+    return data;
+  }
+
+  /**
+   * Get the number of participants of each event
+   * @param data - the data fetched by the reader
+   * @returns {object} The data with the attribute "nbParticipants" containing the data for the corresponding indicator and the title
+   */
+  getNbParticipants(data) {
+    let nbParticipantsFromData = data.mappingcommunity.nbparticipants.data;
+    // This array will hold the final data
+    let nbParticipants = [];
+    // This variable will be used when data is inserted in the array
+    let exist = false;
+    for (let i = 0; i < nbParticipantsFromData.length; i++) {
+      let date = (new Date(nbParticipantsFromData[i].Date));
+      if (nbParticipantsFromData[i].Number > 0) {
+        // This loop is here to add the row in the right array cell in order to have a descending order
+        for (let j = 0; j < nbParticipants.length && !exist; j++) {
+          // If the date of the current row is greater (newer) than the item in the array (year greater or same yeah but month greater)
+          if (date.getFullYear() > nbParticipants[j].date.getFullYear() || (date.getMonth() > nbParticipants[j].date.getMonth() && date.getFullYear()) === nbParticipants[j].date.getFullYear()) {
+            // This array will store the data to be added in the middle of the old one
+            let participantTemp = [];
+            participantTemp.push({
+              date: date,
+              label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
+              female: nbParticipantsFromData[i].Female === "" ? 0 : nbParticipantsFromData[i].Female,
+              male: nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male,
+              new: nbParticipantsFromData[i].New === "" ? 0 : nbParticipantsFromData[i].New,
+              old: nbParticipantsFromData[i].Old === "" ? 0 : nbParticipantsFromData[i].Old
+            });
+            // This array will store the ordered data
+            let res = [];
+            res = nbParticipants.splice(0, j);
+            res = res.concat(participantTemp);
+            res = res.concat(nbParticipants);
+            nbParticipants = res;
+            exist = true;
+          }
+          // If the date of the current row is equal to the date of the item in the array (month and year because it's filtered this way)
+          else if (nbParticipants[j].date.getMonth() === date.getMonth() && nbParticipants[j].date.getFullYear() === date.getFullYear()) {
+            // We update the values of the data
+            nbParticipants[j].female += nbParticipantsFromData[i].Female;
+            nbParticipants[j].male += nbParticipantsFromData[i].Male;
+            nbParticipants[j].new += nbParticipantsFromData[i].New;
+            nbParticipants[j].old += nbParticipantsFromData[i].Old;
+            exist = true;
+          }
+        }
+        // Otherwise, the current row is lower (older) than the last item of the array
+        if (!exist) {
+          // If so, it also means that there is no data for this month so it's added at the end of the array
+          nbParticipants.push({
+            date: date,
+            label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
+            female: nbParticipantsFromData[i].Female === "" ? 0 : nbParticipantsFromData[i].Female,
+            male: nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male,
+            new: nbParticipantsFromData[i].New === "" ? 0 : nbParticipantsFromData[i].New,
+            old: nbParticipantsFromData[i].Old === "" ? 0 : nbParticipantsFromData[i].Old
+          });
+        }
+        else {
+          exist = false;
+        }
+      }
+    }
+    // We store the data calculated in the global data
+    data.mappingcommunity["nbParticipants"] = {
+      title: data.mappingcommunity.nbparticipants.title,
+      data: nbParticipants
+    };
+    delete data.mappingcommunity.nbparticipants;
+    return data;
+  }
 }
 
 export default RamaniHuria;

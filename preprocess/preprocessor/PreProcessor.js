@@ -92,7 +92,6 @@ class PreProcessor {
         dataGeneratedWithLink.title = allDatasFromAPIwithLinks[i].title;
         switch (allDatasFromAPIwithLinks[i].category.toLowerCase()) {
           case "mapping":
-            console.log("data : ", dataGeneratedWithLink);
             generalData.main[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;
             break;
           case "awareness":

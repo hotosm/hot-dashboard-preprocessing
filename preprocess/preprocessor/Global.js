@@ -4,42 +4,11 @@ import AbstractProject from './AbstractProject'
 class Global extends AbstractProject{
   constructor(generalData) {
     super(generalData);
-    this.functions.push("getUsageOfHotData");
-    this.functions.push("getTotalMapathons");
+    this.functions.push("getTotalSubwards");
     this.functions.push("getTotalTrainings");
     this.functions.push("getTotalAttendeesAndInstitutions");
     this.functions.push("getTotalMapEdits");
-    this.functions.push("getTotalSubwards");
-  }
-
-  /**
-   * Get the number of events (mapathons) (by year)
-   * HOT is used every time an event is added
-   * @param data - the data fetched by the reader
-   * @returns {*}
-   */
-  getUsageOfHotData(data) {
-    // This function is used to convert a year to a regex expression
-    let getYearPattern = (year) => {
-      return new RegExp(year + '-([0-9]{2})-([0-9]{2})');   // English date format
-    };
-
-    let usageOfHotData = {};
-    let yearMax = (new Date().getFullYear());
-    let yearMin = yearMax;
-    data.global.mappingcommunity.totalEvents.data.filter(function(row) {
-      let rowYear = (new Date(row.date).getFullYear());
-      if (rowYear<yearMin) {
-        yearMin = rowYear;
-      }
-    });
-    for (; yearMin <= yearMax; yearMin++) {
-      // Each year will be a set of data, every event has a date so each year will store the number of event (mapathon) that took place this year
-      usageOfHotData[yearMax-yearMin] = data.global.mappingcommunity.totalEvents.data
-          .filter(row => row.date && row.date.match(getYearPattern(yearMin))).length;
-    }
-    data.global.main["usageOfHotData"] = usageOfHotData;
-    return data;
+    this.functions.push("getTotalOrganizationsSupported");
   }
 
   /**
@@ -81,7 +50,7 @@ class Global extends AbstractProject{
                 // If the date of the current row is equal to the date of the item in the array
                 else if (divisionDate.getMonth() === subwardsData[l].date.getMonth() &&
                     divisionDate.getFullYear() === subwardsData[l].date.getFullYear()) {
-                  subwardsData[l].TOTAL += divisionData[k].TOTAL;
+                  subwardsData[l].value += divisionData[k].TOTAL;
                   exist = true;
                 }
               }
@@ -90,7 +59,7 @@ class Global extends AbstractProject{
                 subwardsData.push({
                   label : divisionDate.toUTCString().split(" ", 3)[2]+" "+divisionDate.toUTCString().split(" ", 4)[3],
                   date: divisionDate,
-                  total: divisionData[k].TOTAL
+                  value: divisionData[k].TOTAL
                 });
               }
               else {
@@ -105,22 +74,7 @@ class Global extends AbstractProject{
         }
       }
     }
-    data.global.main["totalSubwardsCompleted"] = totalSubwardsCompleted;
-    return data;
-  }
-
-  /**
-   * Get the number of mapathons done
-   * @param data - the data fetched by the reader
-   * @returns {object} The data with the attribute "totalMapathons" which will be used to display the data associated
-   */
-  getTotalMapathons(data) {
-    let totalMapathons = {
-      // Each event is a mapathon so the number of mapathons is the length of the array of events
-      data : data.global.mappingcommunity.totalEvents.data.length,
-      title : data.global.mappingcommunity.totalEvents.title
-    };
-    data.global.main["totalMapathons"] = totalMapathons;
+    data.global.mapping["totalSubwardsCompleted"] = totalSubwardsCompleted;
     return data;
   }
 
@@ -266,7 +220,30 @@ class Global extends AbstractProject{
         }
       }
     }
-    data.global.main["totalEditsAggregated"] = totalEdits;
+    data.global.mapping["totalEditsAggregated"] = totalEdits;
+    return data;
+  }
+
+  /** Get the number of organizations supported **/
+  getTotalOrganizationsSupported(data) {
+    let totalOrganizationsSupported = 0;
+    let projectName = "";
+    //We're going through every project except global which is this one
+    for (let i = 0; i < Object.keys(data).length; i++) {
+      projectName = Object.keys(data)[i];
+      if (projectName !== "global") {
+        for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
+          let subProject = Object.keys(data[projectName])[j];
+          if (Object.keys(data[projectName][subProject]).includes("nborganizations")) {
+            totalOrganizationsSupported += data[projectName][subProject].nborganizations.data.length;
+          }
+        }
+      }
+    }
+    data.global.capacitybuilding["totalOrganizationsSupported"] = {
+      title: "Number of organizations supported",
+      value: totalOrganizationsSupported
+    };
     return data;
   }
 }

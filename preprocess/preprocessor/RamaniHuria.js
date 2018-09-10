@@ -22,7 +22,6 @@ class RamaniHuria extends AbstractProject{
    */
   getNbAttendeesMonthly(data) {
     const nbAttendees = "Number attendees";
-    const nbInstitutions = "Number institutions";
     const endDate = "End date";
 
     let attendees = data.capacitybuilding.nbattendeesmonthly.data;
@@ -41,8 +40,7 @@ class RamaniHuria extends AbstractProject{
           attendeesTemp.push({
             date : date,
             label : date.toUTCString().split(" ", 3)[2]+" "+date.toUTCString().split(" ", 4)[3],
-            nbAttendees: attendees[i][nbAttendees],
-            nbInstitutions: attendees[i][nbInstitutions],
+            value: attendees[i][nbAttendees]
           });
           // This array will store the ordered data
           let res = [];
@@ -54,9 +52,8 @@ class RamaniHuria extends AbstractProject{
         }
         // If the date of the current row is equal to the date of the item in the array (month and year because it's filtered this way)
         else if (attendeesArray[j].date.getMonth() === date.getMonth() && attendeesArray[j].date.getFullYear() === date.getFullYear()) {
-          // We update the values of the data
-          attendeesArray[j].nbAttendees += attendees[i][nbAttendees];
-          attendeesArray[j].nbInstitutions += attendees[i][nbInstitutions];
+          // We update the value of the data
+          attendeesArray[j].value += attendees[i][nbAttendees];
           exist = true;
         }
       }
@@ -66,8 +63,7 @@ class RamaniHuria extends AbstractProject{
         attendeesArray.push({
           date : date,
           label : date.toUTCString().split(" ", 3)[2]+" "+date.toUTCString().split(" ", 4)[3],
-          nbAttendees: attendees[i][nbAttendees],
-          nbInstitutions: attendees[i][nbInstitutions],
+          value: attendees[i][nbAttendees],
         });
       }
       else {
@@ -96,75 +92,75 @@ class RamaniHuria extends AbstractProject{
       title: nbAttendeesInstitutionsFromData.title,
       data: [
         {
-          label: "University of Dar es Salaam and Ardhi University",
-          shorten: "DSAU",
-          nbAttendees : 0
+          extend: "University of Dar es Salaam and Ardhi University",
+          label: "DSAU",
+          value : 0
         },
         {
-          label: "WB Consultants",
-          shorten: "WB",
-          nbAttendees : 0
+          extend: "WB Consultants",
+          label: "WB",
+          value : 0
         },
         {
-          label: "Red Cross",
-          shorten: "RC",
-          nbAttendees : 0
+          extend: "Red Cross",
+          label: "RC",
+          value : 0
         },
         {
-          label: "Municipal Councils representative",
-          shorten: "MCR",
-          nbAttendees : 0
+          extend: "Municipal Councils representative",
+          label: "MCR",
+          value : 0
         },
         {
-          label: "City Council Representatives",
-          shorten: "CCR",
-          nbAttendees : 0
+          extend: "City Council Representatives",
+          label: "CCR",
+          value : 0
         },
         {
-          label: "National Bureau of Statistics",
-          shorten: "NBS",
-          nbAttendees : 0
+          extend: "National Bureau of Statistics",
+          label: "NBS",
+          value : 0
         },
         {
-          label: "Energy and Water Utility Regulatory Authority",
-          shorten: "EWA",
-          nbAttendees : 0
+          extend: "Energy and Water Utility Regulatory Authority",
+          label: "EWA",
+          value : 0
         },
         {
-          label: "Ministry of Health",
-          shorten: "MoH",
-          nbAttendees : 0
+          extend: "Ministry of Health",
+          label: "MoH",
+          value : 0
         },
         {
-          label: "Ministry of Water (DAWASA & DAWASCO)",
-          shorten: "MoW",
-          nbAttendees : 0
+          extend: "Ministry of Water (DAWASA & DAWASCO)",
+          label: "MoW",
+          value : 0
         },
         {
-          label: "Tanzania Petroleum Development Corporation",
-          shorten: "TPDC",
-          nbAttendees : 0
+          extend: "Tanzania Petroleum Development Corporation",
+          label: "TPDC",
+          value : 0
         },
         {
-          label: "Commission of Science and Technology",
-          shorten: "CST",
-          nbAttendees : 0
+          extend: "Commission of Science and Technology",
+          label: "CST",
+          value : 0
         },
         {
-          label: "Local Government Authority (LGA) leaders",
-          shorten: "LGA",
-          nbAttendees : 0
+          extend: "Local Government Authority (LGA) leaders",
+          label: "LGA",
+          value : 0
         },
         {
-          label: "Community members",
-          shorten: "CM",
-          nbAttendees : 0
+          extend: "Community members",
+          label: "CM",
+          value : 0
         }
       ]
     };
     for (let i = 0; i < nbAttendeesInstitutionsFromData.data.length; i++) {
       for (let j = 0; j < nbAttendeesInstitutions.data.length; j++) {
-        nbAttendeesInstitutions.data[j].nbAttendees += nbAttendeesInstitutionsFromData.data[i][nbAttendeesInstitutions.data[j].label];
+        nbAttendeesInstitutions.data[j].value += nbAttendeesInstitutionsFromData.data[i][nbAttendeesInstitutions.data[j].extend];
       }
     }
     // We store the data calculated in the global data
@@ -201,7 +197,7 @@ class RamaniHuria extends AbstractProject{
         },
         {
           extend: "OsmAnd application and Map Reading",
-          label: "Osm",
+          label: "Osm & Map",
           value : 0
         }
       ]
@@ -273,11 +269,11 @@ class RamaniHuria extends AbstractProject{
    */
   getNbEvents(data) {
     // We store the data calculated in the global data
-    data.mappingcommunity["nbEvents"] = {
-      title: data.mappingcommunity.nbevents.title,
-      data: data.mappingcommunity.nbevents.data.filter(row => row["No."] !== "").length
+    data.community["nbEvents"] = {
+      title: data.community.nbevents.title,
+      data: data.community.nbevents.data.filter(row => row["No."] !== "").length
     };
-    delete data.mappingcommunity.nbevents;
+    delete data.community.nbevents;
     return data;
   }
 
@@ -287,7 +283,7 @@ class RamaniHuria extends AbstractProject{
    * @returns {object} The data with the attribute "nbParticipants" containing the data for the corresponding indicator and the title
    */
   getNbParticipants(data) {
-    let nbParticipantsFromData = data.mappingcommunity.nbparticipants.data;
+    let nbParticipantsFromData = data.community.nbparticipants.data;
     // This array will hold the final data
     let nbParticipants = [];
     // This variable will be used when data is inserted in the array
@@ -345,11 +341,11 @@ class RamaniHuria extends AbstractProject{
       }
     }
     // We store the data calculated in the global data
-    data.mappingcommunity["nbParticipants"] = {
-      title: data.mappingcommunity.nbparticipants.title,
+    data.community["nbParticipants"] = {
+      title: data.community.nbparticipants.title,
       data: nbParticipants
     };
-    delete data.mappingcommunity.nbparticipants;
+    delete data.community.nbparticipants;
     return data;
   }
 }

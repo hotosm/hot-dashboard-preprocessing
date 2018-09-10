@@ -1,7 +1,6 @@
 import preProcessingService from "../preprocessor/PreProcessor";
 import Global from "../preprocessor/Global";
 import RamaniHuria from "../preprocessor/RamaniHuria";
-import ProjectTest from "../preprocessor/ProjectTest";
 import Writer from "../utils/Writer";
 import jsdom from 'jsdom';
 
@@ -47,10 +46,6 @@ class Preprocess {
           case "ramanihuria":
             project = new RamaniHuria(dataFromAPI.ramanihuria);
             dataFromAPI.ramanihuria = project.process();
-            break;
-          case "projecttest":
-            project = new ProjectTest(dataFromAPI.projecttest);
-            dataFromAPI.projecttest = project.process();
             break;
           default:
             break;

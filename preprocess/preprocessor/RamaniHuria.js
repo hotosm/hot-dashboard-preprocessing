@@ -4,14 +4,86 @@ import AbstractProject from './AbstractProject'
 class RamaniHuria extends AbstractProject{
   constructor(generalData) {
     super(generalData);
-    // this.functions.push("getPeopleTrained");
-    // this.functions.push("getPeopleTrainedMonthly");
+    this.functions.push("getNbSubwards");
     this.functions.push("getNbAttendeesMonthly");
     this.functions.push("getNbAttendeesInstitutions");
     this.functions.push("getNbAttendeesTraining");
     this.functions.push("getNbWorkshops");
     this.functions.push("getNbEvents");
-    this.functions.push("getNbParticipants");
+    this.functions.push("getNbParticipantsGender");
+    this.functions.push("getNbParticipantsNew");
+  }
+
+  /**
+   * Get the number of subwards achieved by month
+   * @param data - the data fetched by the reader
+   * @returns {object}
+   */
+  getNbSubwards(data) {
+    let nbSubwardsCompleted = {};
+    // This array will hold the final data
+    let nbSubwards = [];
+    let nbSubwardsFromData = data.mapping.nbsubwardscompleted.data.filter(row => row["Ward"] === "TOTAL")[0];
+    // This variable will be used when data is inserted in the array
+    let exist = false;
+    // This loop is here to add the row in the right array cell in order to have a descending order
+    // We start at the 4th object because we kno that the firsts columns are 'Population' and 'Area'
+    for (let k = 3; k < Object.keys(nbSubwardsFromData).length; k++) {
+      let exist = false;
+      let divisionData = Object.values(nbSubwardsFromData)[k];
+      if (divisionData > 0) {
+        let nbElements = Object.keys(nbSubwardsFromData)[k].split(" ").length;
+        // We know that the date will be at the end of the header and is 9 characters long (3 char for the month et 4 for for the year and the spaces)
+        let subwardType = Object.keys(nbSubwardsFromData)[k].substring(0, Object.keys(nbSubwardsFromData)[k].length - 10);
+        let month = Object.keys(nbSubwardsFromData)[k].split(" ", nbElements)[nbElements - 2];
+        let year = Object.keys(nbSubwardsFromData)[k].split(" ", nbElements)[nbElements - 1];
+        let divisionDate = (new Date(month + " 1 " + year));
+        for (let l = 0; l < nbSubwards.length && !exist; l++) {
+          // If the date of the current row is greater (newer) than the item in the array
+          if (divisionDate.getFullYear() > nbSubwards[l].date.getFullYear() ||
+              (divisionDate.getMonth() > nbSubwards[l].date.getMonth() &&
+                  nbSubwards[l].date.getFullYear() === divisionDate.getFullYear())) {
+            let divisionDataTemp = {
+              extend: subwardType,
+              label: divisionDate.toUTCString().split(" ", 3)[2] + " " + divisionDate.toUTCString().split(" ", 4)[3],
+              date: divisionDate,
+              value: divisionData
+            };
+            let res = [];
+            res = res.concat(nbSubwards.splice(0, l));
+            res = res.concat(divisionDataTemp);
+            res = res.concat(nbSubwards);
+            nbSubwards = res;
+            exist = true;
+          }
+          // If the date of the current row is equal to the date of the item in the array
+          else if (divisionDate.getMonth() === nbSubwards[l].date.getMonth() &&
+              divisionDate.getFullYear() === nbSubwards[l].date.getFullYear()) {
+            nbSubwards[l].value += Object.values(nbSubwardsFromData)[k];
+            exist = true;
+          }
+        }
+        // Otherwise, the current row is lower (older) than the last item of the array
+        if (!exist) {
+          nbSubwards.push({
+            extend: subwardType,
+            label: divisionDate.toUTCString().split(" ", 3)[2] + " " + divisionDate.toUTCString().split(" ", 4)[3],
+            date: divisionDate,
+            value: divisionData
+          });
+        }
+        else {
+          exist = false;
+        }
+      }
+      nbSubwardsCompleted = {
+        title: data.mapping.nbsubwardscompleted.title,
+        data: nbSubwards
+      };
+    }
+    data.mapping["nbSubwardsCompleted"] = nbSubwardsCompleted;
+    delete data.mapping.nbsubwardscompleted;
+    return data;
   }
 
   /**
@@ -246,6 +318,7 @@ class RamaniHuria extends AbstractProject{
           nbWorkshops[counter] =
               {
                 value: nbWorkshopsFiltered.length,
+                date: (new Date(nbWorkshopsFiltered[0][endDate])),
                 label: (new Date(nbWorkshopsFiltered[0][endDate])).toUTCString().split(" ", 3)[2]+" "+(new Date(nbWorkshopsFiltered[0][endDate])).toUTCString().split(" ", 4)[3]
               };
           counter++;
@@ -278,12 +351,12 @@ class RamaniHuria extends AbstractProject{
   }
 
   /**
-   * Get the number of participants of each event
+   * Get the number of participants of each event focusing on the gender
    * @param data - the data fetched by the reader
    * @returns {object} The data with the attribute "nbParticipants" containing the data for the corresponding indicator and the title
    */
-  getNbParticipants(data) {
-    let nbParticipantsFromData = data.community.nbparticipants.data;
+  getNbParticipantsGender(data) {
+    let nbParticipantsFromData = data.community.nbparticipantsgender.data;
     // This array will hold the final data
     let nbParticipants = [];
     // This variable will be used when data is inserted in the array
@@ -301,9 +374,7 @@ class RamaniHuria extends AbstractProject{
               date: date,
               label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
               female: nbParticipantsFromData[i].Female === "" ? 0 : nbParticipantsFromData[i].Female,
-              male: nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male,
-              new: nbParticipantsFromData[i].New === "" ? 0 : nbParticipantsFromData[i].New,
-              old: nbParticipantsFromData[i].Old === "" ? 0 : nbParticipantsFromData[i].Old
+              male: nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male
             });
             // This array will store the ordered data
             let res = [];
@@ -318,6 +389,70 @@ class RamaniHuria extends AbstractProject{
             // We update the values of the data
             nbParticipants[j].female += nbParticipantsFromData[i].Female;
             nbParticipants[j].male += nbParticipantsFromData[i].Male;
+            exist = true;
+          }
+        }
+        // Otherwise, the current row is lower (older) than the last item of the array
+        if (!exist) {
+          // If so, it also means that there is no data for this month so it's added at the end of the array
+          nbParticipants.push({
+            date: date,
+            label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
+            female: nbParticipantsFromData[i].Female === "" ? 0 : nbParticipantsFromData[i].Female,
+            male: nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male
+          });
+        }
+        else {
+          exist = false;
+        }
+      }
+    }
+    // We store the data calculated in the global data
+    data.community["nbParticipantsGender"] = {
+      title: data.community.nbparticipantsgender.title,
+      data: nbParticipants
+    };
+    delete data.community.nbparticipantsgender;
+    return data;
+  }
+
+  /**
+   * Get the number of participants of each event focusing on the old/new division
+   * @param data - the data fetched by the reader
+   * @returns {object} The data with the attribute "nbParticipants" containing the data for the corresponding indicator and the title
+   */
+  getNbParticipantsNew(data) {
+    let nbParticipantsFromData = data.community.nbparticipantsnew.data;
+    // This array will hold the final data
+    let nbParticipants = [];
+    // This variable will be used when data is inserted in the array
+    let exist = false;
+    for (let i = 0; i < nbParticipantsFromData.length; i++) {
+      let date = (new Date(nbParticipantsFromData[i].Date));
+      if (nbParticipantsFromData[i].Number > 0) {
+        // This loop is here to add the row in the right array cell in order to have a descending order
+        for (let j = 0; j < nbParticipants.length && !exist; j++) {
+          // If the date of the current row is greater (newer) than the item in the array (year greater or same yeah but month greater)
+          if (date.getFullYear() > nbParticipants[j].date.getFullYear() || (date.getMonth() > nbParticipants[j].date.getMonth() && date.getFullYear()) === nbParticipants[j].date.getFullYear()) {
+            // This array will store the data to be added in the middle of the old one
+            let participantTemp = [];
+            participantTemp.push({
+              date: date,
+              label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
+              new: nbParticipantsFromData[i].New === "" ? 0 : nbParticipantsFromData[i].New,
+              old: nbParticipantsFromData[i].Old === "" ? 0 : nbParticipantsFromData[i].Old
+            });
+            // This array will store the ordered data
+            let res = [];
+            res = nbParticipants.splice(0, j);
+            res = res.concat(participantTemp);
+            res = res.concat(nbParticipants);
+            nbParticipants = res;
+            exist = true;
+          }
+          // If the date of the current row is equal to the date of the item in the array (month and year because it's filtered this way)
+          else if (nbParticipants[j].date.getMonth() === date.getMonth() && nbParticipants[j].date.getFullYear() === date.getFullYear()) {
+            // We update the values of the data
             nbParticipants[j].new += nbParticipantsFromData[i].New;
             nbParticipants[j].old += nbParticipantsFromData[i].Old;
             exist = true;
@@ -329,8 +464,6 @@ class RamaniHuria extends AbstractProject{
           nbParticipants.push({
             date: date,
             label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
-            female: nbParticipantsFromData[i].Female === "" ? 0 : nbParticipantsFromData[i].Female,
-            male: nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male,
             new: nbParticipantsFromData[i].New === "" ? 0 : nbParticipantsFromData[i].New,
             old: nbParticipantsFromData[i].Old === "" ? 0 : nbParticipantsFromData[i].Old
           });
@@ -341,11 +474,11 @@ class RamaniHuria extends AbstractProject{
       }
     }
     // We store the data calculated in the global data
-    data.community["nbParticipants"] = {
-      title: data.community.nbparticipants.title,
+    data.community["nbParticipantsNew"] = {
+      title: data.community.nbparticipantsnew.title,
       data: nbParticipants
     };
-    delete data.community.nbparticipants;
+    delete data.community.nbparticipantsnew;
     return data;
   }
 }

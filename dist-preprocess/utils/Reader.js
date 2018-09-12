@@ -8,43 +8,35 @@ var _babyparse = require('babyparse');
 
 var _babyparse2 = _interopRequireDefault(_babyparse);
 
+var _request = require('request');
+
+var _request2 = _interopRequireDefault(_request);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Reader {
   constructor() {
     this.getCsv = this.getCsv.bind(this);
     this.getJson = this.getJson.bind(this);
-    this.jquery = null;
-  }
-
-  setJquery($) {
-    this.jquery = $;
   }
 
   /** Get the CSV datas **/
-  getCsv(url, callback) {
+  getCsv(uri, callback) {
     return new Promise((resolve, reject) => {
-      this.jquery.ajax({
-        url: url,
-        data: {},
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        },
-        success: function (data) {
-          _babyparse2.default.parse(data, {
-            download: false,
-            header: true,
-            dynamicTyping: true,
-            complete: results => {
-              resolve(callback(results));
-            },
-            error: error => {
-              reject(error);
-            }
-          });
-        },
-        error: function (e) {
-          console.error("getCsv error: ", e);
+      (0, _request2.default)({ uri: uri }, function (err, data) {
+        _babyparse2.default.parse(data.body, {
+          download: false,
+          header: true,
+          dynamicTyping: true,
+          complete: results => {
+            resolve(callback(results));
+          },
+          error: error => {
+            reject(error);
+          }
+        });
+        if (err !== null) {
+          console.error(err);
         }
       });
     });
@@ -55,15 +47,15 @@ class Reader {
     if (config.link) {
       const url = config.link;
       const name = config.name;
-      return this.jquery.ajax({
-        url: url,
-        data: {},
-        success: function (data) {
-          return data;
-        },
-        error: function (e) {
-          console.error("GetJson error: ", e);
-        }
+      return new Promise((resolve, reject) => {
+        (0, _request2.default)({ url: url }, function (err, data) {
+          if (err !== null) {
+            console.error(err);
+            reject(err);
+          } else {
+            resolve(data.body);
+          }
+        });
       }).then(findResponse => {
         return this.getPropByString(findResponse, name);
       });

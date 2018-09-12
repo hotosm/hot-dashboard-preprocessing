@@ -1,42 +1,34 @@
-import Baby           from 'babyparse';
+import Baby    from 'babyparse';
+import request from 'request';
 
 class Reader {
   constructor() {
     this.getCsv   = this.getCsv.bind(this);
     this.getJson   = this.getJson.bind(this);
-    this.jquery = null;
   }
 
-  setJquery($) {
-    this.jquery = $;
-  }
-
-  /** Get the CSV datas **/
-  getCsv(url, callback) {
+   /** Get the CSV datas **/
+  getCsv(uri, callback) {
     return new Promise((resolve, reject) => {
-      this.jquery.ajax({
-        url: url,
-        data: {},
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        },
-        success: function( data ) {
-          Baby.parse(data, {
-            download      : false,
-            header        : true,
-            dynamicTyping : true,
-            complete      : (results) => {
-              resolve(callback(results));
-            },
-            error         : (error) => {
-              reject(error);
+      request(
+          {uri: uri},
+          function(err, data){
+            Baby.parse(data.body, {
+              download      : false,
+              header        : true,
+              dynamicTyping : true,
+              complete      : (results) => {
+                resolve(callback(results));
+              },
+              error         : (error) => {
+                reject(error);
+              }
+            });
+            if(err !== null){
+              console.error(err);
             }
-          });
-        },
-        error: function (e) {
-          console.error("getCsv error: ", e);
-        }
-      });
+          }
+      );
     });
   }
 
@@ -45,18 +37,22 @@ class Reader {
     if(config.link) {
       const url = config.link;
       const name = config.name;
-      return this.jquery.ajax({
-        url: url,
-        data: {},
-        success: function( data ) {
-          return data;
-        },
-        error: function (e) {
-          console.error("GetJson error: ", e);
-        }
+      return new Promise((resolve, reject) => {
+        request(
+            {url: url},
+            function(err, data){
+              if(err !== null){
+                console.error(err);
+                reject(err);
+              }
+              else {
+                resolve(data.body);
+              }
+            }
+        )
       })
           .then((findResponse) => {
-            return this.getPropByString(findResponse, name);
+            return this.getPropByString(findResponse, name)
           });
     }
     else {

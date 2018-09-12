@@ -18,7 +18,8 @@ class DummyProject extends _AbstractProject2.default {
     this.functions.push("getNbAttendeesMonthly");
     this.functions.push("getNbAttendeesInstitutions");
     this.functions.push("getNbAttendeesTraining");
-    this.functions.push("getNbWorkshops");
+    this.functions.push("getNbWorkshopsMonthly");
+    this.functions.push("getNbTrainings");
     this.functions.push("getNbEvents");
     this.functions.push("getNbParticipantsGender");
     this.functions.push("getNbParticipantsNew");
@@ -279,13 +280,13 @@ class DummyProject extends _AbstractProject2.default {
    * @returns {object} The data with the attribute "nbWorkshopsMonthly" containing the data for the corresponding indicator : number of technical workshops per month
    * The advantage to have an descending array allow us to display the last 6 months or the last 3 months according to our needs
    */
-  getNbWorkshops(data) {
+  getNbWorkshopsMonthly(data) {
     const endDate = "End date";
     let yearMax = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
     let yearMin = yearMax;
     let nbWorkshops = [];
-    data.capacitybuilding.nbworkshops.data.filter(function (row) {
+    data.capacitybuilding.nbworkshopsmonthly.data.filter(function (row) {
       let rowYear = new Date(row[endDate]).getFullYear();
       if (rowYear < yearMin) {
         yearMin = rowYear;
@@ -298,7 +299,7 @@ class DummyProject extends _AbstractProject2.default {
         month = currentMonth;
       }
       for (; month >= 0; month--) {
-        let nbWorkshopsFiltered = data.capacitybuilding.nbworkshops.data.filter(row => row[endDate] && new Date(row[endDate]).getFullYear() === yearMax && new Date(row[endDate]).getMonth() === month);
+        let nbWorkshopsFiltered = data.capacitybuilding.nbworkshopsmonthly.data.filter(row => row[endDate] && new Date(row[endDate]).getFullYear() === yearMax && new Date(row[endDate]).getMonth() === month);
         if (nbWorkshopsFiltered.length > 0) {
           nbWorkshops[counter] = {
             value: nbWorkshopsFiltered.length,
@@ -310,12 +311,26 @@ class DummyProject extends _AbstractProject2.default {
       }
     }
     let nbWorkshopsStored = {
-      title: data.capacitybuilding.nbworkshops.title,
+      title: data.capacitybuilding.nbworkshopsmonthly.title,
       data: nbWorkshops
     };
     // We store the data calculated in the global data
-    data.capacitybuilding["nbWorkshops"] = nbWorkshopsStored;
-    delete data.capacitybuilding.nbworkshops;
+    data.capacitybuilding["nbWorkshopsMonthly"] = nbWorkshopsStored;
+    delete data.capacitybuilding.nbworkshopsmonthly;
+    return data;
+  }
+
+  /**
+   * Get the number of trainings conducted
+   * @param data - the data fetched by the reader
+   * @returns {object}
+   */
+  getNbTrainings(data) {
+    data.capacitybuilding["nbTrainings"] = {
+      title: data.capacitybuilding.nbtrainings.title,
+      value: data.capacitybuilding.nbtrainings.data.length
+    };
+    delete data.capacitybuilding.nbtrainings;
     return data;
   }
 
@@ -325,10 +340,9 @@ class DummyProject extends _AbstractProject2.default {
    * @returns {object} The data with the attribute "nbEvents" containing the data for the corresponding indicator and the title
    */
   getNbEvents(data) {
-    // We store the data calculated in the global data
     data.community["nbEvents"] = {
       title: data.community.nbevents.title,
-      data: data.community.nbevents.data.filter(row => row["No."] !== "").length
+      value: data.community.nbevents.data.filter(row => row["No."] !== "").length
     };
     delete data.community.nbevents;
     return data;

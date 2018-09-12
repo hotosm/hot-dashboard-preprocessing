@@ -20,23 +20,14 @@ var _Writer = require("../utils/Writer");
 
 var _Writer2 = _interopRequireDefault(_Writer);
 
-var _jsdom = require("jsdom");
-
-var _jsdom2 = _interopRequireDefault(_jsdom);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // This is used to call the Writer anywhere (it's used to post data to the AWS bucket)
 const writer = new _Writer2.default();
-const { JSDOM } = _jsdom2.default;
-const { window } = new JSDOM();
-const { document } = new JSDOM('').window;
-global.document = document;
 
 class Preprocess {
-  constructor($ = null) {
-    this.preProcessingService = new _PreProcessor2.default($);
-    writer.setJquery($);
+  constructor() {
+    this.preProcessingService = new _PreProcessor2.default();
   }
 
   async process() {
@@ -92,8 +83,7 @@ class Preprocess {
 
 exports.default = function (event, context, callback) {
   try {
-    var $ = require("jquery")(window);
-    new Preprocess($).process();
+    new Preprocess().process();
     callback(null, "The file rawdata.json was sucessfully updated !");
   } catch (e) {
     console.error("There was an error during the execution of the lambda function", e);

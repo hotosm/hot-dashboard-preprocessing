@@ -3,19 +3,13 @@ import Global from "../preprocessor/Global";
 import RamaniHuria from "../preprocessor/RamaniHuria";
 import DummyProject from "../preprocessor/DummyProject";
 import Writer from "../utils/Writer";
-import jsdom from 'jsdom';
 
 // This is used to call the Writer anywhere (it's used to post data to the AWS bucket)
 const writer = new Writer();
-const { JSDOM } = jsdom;
-const { window } = new JSDOM();
-const { document } = (new JSDOM('')).window;
-global.document = document;
 
 class Preprocess {
-  constructor($=null) {
-    this.preProcessingService = new preProcessingService($);
-    writer.setJquery($);
+  constructor() {
+    this.preProcessingService = new preProcessingService();
   }
 
   async process() {
@@ -74,8 +68,7 @@ class Preprocess {
 
 exports.default = function(event, context, callback) {
   try {
-    var $ = require("jquery")(window);
-    new Preprocess($).process();
+    new Preprocess().process();
     callback(null, "The file rawdata.json was sucessfully updated !");
   }
   catch (e) {

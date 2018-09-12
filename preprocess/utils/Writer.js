@@ -1,37 +1,34 @@
-import CONFIG from "../external/Constants";
+import CONFIG  from "../external/Constants";
+import request from 'request';
 
 class Writer {
   constructor() {
     this.setJson   = this.setJson.bind(this);
-    this.jquery = null;
-  }
-
-  setJquery($) {
-    this.jquery = $;
   }
 
   /** Set the JSON datas **/
   setJson(data) {
     return (async () => {
       try {
-        await this.jquery.ajax({
-          contentType: "application/json",
-          method: "put",
-          url: CONFIG.awsBucket,
-          data: JSON.stringify(data),
-          success: function (data) {
-            console.log("write successful !");
-          },
-          error: function (d) {
-            console.error("e", d);
-          }
-        })
+        await request({
+              method: "put",
+              uri: CONFIG.awsBucket,
+              body: data,
+              json: true,
+              headers: {'content-type': 'application/json'}
+              },
+              function (err, data) {
+                console.log("write successful !");
+                if(err !== null){
+                  console.error("e", err);
+                }
+              }
+        );
       }
       catch (e) {
         console.error("Write error !", e)
       }
     })();
   }
-
 }
 export default Writer;

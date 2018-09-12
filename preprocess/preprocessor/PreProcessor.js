@@ -12,7 +12,6 @@ class PreProcessor {
     this.getDataFromProjects = this.getDataFromProjects.bind(this);
     this.getProjectsFromAPI = this.getProjectsFromAPI.bind(this);
     this.getDataFromProjectsFile = this.getDataFromProjectsFile.bind(this);
-    reader.setJquery($);
   }
 
   //------------------------------------------------------------------------//
@@ -64,7 +63,8 @@ class PreProcessor {
       mapping: {},
       capacitybuilding: {},
       awareness: {},
-      community: {}
+      community: {},
+      main: {}
     }; // Array of data with all the indicators we want
 
     // For each little objects on the big object
@@ -102,6 +102,9 @@ class PreProcessor {
             break;
           case "community" :
             generalData.community[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;
+            break;
+          case "main" :
+            generalData.main[allDatasFromAPIwithLinks[i].name] = dataGeneratedWithLink;
             break;
           default:
         }

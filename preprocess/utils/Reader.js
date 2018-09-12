@@ -17,6 +17,9 @@ class Reader {
       this.jquery.ajax({
         url: url,
         data: {},
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
         success: function( data ) {
           Baby.parse(data, {
             download      : false,

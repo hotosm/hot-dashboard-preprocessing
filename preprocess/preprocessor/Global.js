@@ -29,7 +29,6 @@ class Global extends AbstractProject{
     //We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data).length; i++) {
       projectName = Object.keys(data)[i];
-      subwardsData = [];
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
@@ -45,9 +44,15 @@ class Global extends AbstractProject{
                 if (divisionDate.getFullYear() > subwardsData[l].date.getFullYear() ||
                     (divisionDate.getMonth() > subwardsData[l].date.getFullYear() &&
                         subwardsData[l].date.getFullYear() === divisionDate.getFullYear())) {
+                  let subwardTemp = {
+                    extend: divisionData[k].extend,
+                    label: divisionData[k].label,
+                    date: divisionData[k].date,
+                    value: divisionData[k].value
+                  };
                   let res = [];
                   res = res.concat(subwardsData.splice(0, j));
-                  res = res.concat(divisionData[k]);
+                  res = res.push(subwardTemp);
                   res = res.concat(subwardsData);
                   subwardsData = res;
                   exist = true;
@@ -55,14 +60,18 @@ class Global extends AbstractProject{
                 // If the date of the current row is equal to the date of the item in the array
                 else if (divisionDate.getMonth() === subwardsData[l].date.getMonth() &&
                     divisionDate.getFullYear() === subwardsData[l].date.getFullYear()) {
-                  subwardsData[l].new += divisionData[k].new;
-                  subwardsData[l].old += divisionData[k].old;
+                  subwardsData[l].value += divisionData[k].value;
                   exist = true;
                 }
               }
               // Otherwise, the current row is lower (older) than the last item of the array
               if (!exist) {
-                subwardsData.push(divisionData[k]);
+                subwardsData.push({
+                  extend: divisionData[k].extend,
+                  label: divisionData[k].label,
+                  date: divisionData[k].date,
+                  value: divisionData[k].value
+                });
               }
               else {
                 exist = false;
@@ -81,130 +90,140 @@ class Global extends AbstractProject{
   }
 
   /** Get the number of trainings **/
-  getTotalTrainings(data) {
-    let totalTrainings = 0;
-    let totalTrainingsMen = 0;
-    let totalTrainingsWomen = 0;
-    let totalMonthlyDivision = {
-      title: "Total monthly training (last 6 months)",
-      data: {}
-    };
-    let projectName = "";
-    //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
-      if (projectName !== "global") {
-        for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("trainings")) {
-            totalTrainings += data[projectName][subProject].trainings.total;
-            totalTrainingsMen += data[projectName][subProject].trainings.men;
-            totalTrainingsWomen += data[projectName][subProject].trainings.women;
-          }
-          if (Object.keys(data[projectName][subProject]).includes("monthlyDivision")) {
-            let divisionKeys = Object.keys(data[projectName][subProject].monthlyDivision.data);
-            let counter = 0;
-            let notfound = true;
-            for (let k = 0; k < divisionKeys.length && counter < 12; k++) {
-              for (let l = 0; l < divisionKeys.length && counter < 12 && notfound; l++) {
-                if (totalMonthlyDivision.data[divisionKeys[k]] === undefined) {
-                  totalMonthlyDivision.data[divisionKeys[k]] = {
-                    label: data[projectName][subProject].monthlyDivision.data[divisionKeys[k]].label,
-                    value: data[projectName][subProject].monthlyDivision.data[divisionKeys[k]].value
-                  };
-                  counter++;
-                  notfound = false;
-                }
-                else if (totalMonthlyDivision.data[divisionKeys[l]].label === data[projectName][subProject].monthlyDivision.data[divisionKeys[k]].label) {
-                  totalMonthlyDivision.data[divisionKeys[l]] = {
-                    label: totalMonthlyDivision.data[divisionKeys[l]].label,
-                    value: totalMonthlyDivision.data[divisionKeys[l]].value + data[projectName][subProject].monthlyDivision.data[divisionKeys[k]].value
-                  };
-                  counter++;
-                  notfound = false;
-                }
-              }
-              notfound = true;
-            }
-          }
-        }
-      }
-    }
-    data.global.capacitybuilding["monthlyDivision"] = totalMonthlyDivision;
-    data.global.capacitybuilding["trainings"] = {
-      total: totalTrainings,
-      men: totalTrainingsMen,
-      women: totalTrainingsWomen
-    };
-    return data;
-  }
+  // getTotalTrainings(data) {
+  //   let totalTrainings = 0;
+  //   let totalTrainingsMen = 0;
+  //   let totalTrainingsWomen = 0;
+  //   let totalMonthlyDivision = {
+  //     title: "Total monthly training (last 6 months)",
+  //     data: {}
+  //   };
+  //   let projectName = "";
+  //   //We're going through every project except global which is this one
+  //   for (let i = 0; i < Object.keys(data).length; i++) {
+  //     projectName = Object.keys(data)[i];
+  //     if (projectName !== "global") {
+  //       for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
+  //         let subProject = Object.keys(data[projectName])[j];
+  //         if (Object.keys(data[projectName][subProject]).includes("trainings")) {
+  //           totalTrainings += data[projectName][subProject].trainings.total;
+  //           totalTrainingsMen += data[projectName][subProject].trainings.men;
+  //           totalTrainingsWomen += data[projectName][subProject].trainings.women;
+  //         }
+  //         if (Object.keys(data[projectName][subProject]).includes("monthlyDivision")) {
+  //           let divisionKeys = Object.keys(data[projectName][subProject].monthlyDivision.data);
+  //           let counter = 0;
+  //           let notfound = true;
+  //           for (let k = 0; k < divisionKeys.length && counter < 12; k++) {
+  //             for (let l = 0; l < divisionKeys.length && counter < 12 && notfound; l++) {
+  //               if (totalMonthlyDivision.data[divisionKeys[k]] === undefined) {
+  //                 totalMonthlyDivision.data[divisionKeys[k]] = {
+  //                   label: data[projectName][subProject].monthlyDivision.data[divisionKeys[k]].label,
+  //                   value: data[projectName][subProject].monthlyDivision.data[divisionKeys[k]].value
+  //                 };
+  //                 counter++;
+  //                 notfound = false;
+  //               }
+  //               else if (totalMonthlyDivision.data[divisionKeys[l]].label === data[projectName][subProject].monthlyDivision.data[divisionKeys[k]].label) {
+  //                 totalMonthlyDivision.data[divisionKeys[l]] = {
+  //                   label: totalMonthlyDivision.data[divisionKeys[l]].label,
+  //                   value: totalMonthlyDivision.data[divisionKeys[l]].value + data[projectName][subProject].monthlyDivision.data[divisionKeys[k]].value
+  //                 };
+  //                 counter++;
+  //                 notfound = false;
+  //               }
+  //             }
+  //             notfound = true;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  //   data.global.capacitybuilding["monthlyDivision"] = totalMonthlyDivision;
+  //   data.global.capacitybuilding["trainings"] = {
+  //     total: totalTrainings,
+  //     men: totalTrainingsMen,
+  //     women: totalTrainingsWomen
+  //   };
+  //   return data;
+  // }
 
   /** Get the number of people and organizations trained during the workshops **/
-  getTotalAttendeesAndInstitutions(data) {
-    let projectName = "";
-    let totalAttendees = {
-      titleAttendees: "",
-      titleInstitutions: "",
-      titleWorkshop: "",
-      workshops: 0,
-      data: []
-    };
-    let attendeesData = [];
-    //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
-      attendeesData = [];
-      if (projectName !== "global") {
-        for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("attendeesAndInstitutions")) {
-            let divisionKeys = data[projectName][subProject].attendeesAndInstitutions;
-            let divisionData = divisionKeys.data;
-            let exist = false;
-            // This loop is here to add the row in the right array cell in order to have a descending order
-            for (let k = 0; k < divisionData.length; k++) {
-              for (let l = 0; l < attendeesData.length && !exist; l++) {
-                // If the date of the current row is greater (newer) than the item in the array
-                if (divisionData[k].date.getFullYear() > attendeesData[l].date.getFullYear() ||
-                    (divisionData[k].date.getMonth() > attendeesData[l].date.getFullYear() &&
-                        attendeesData[l].date.getFullYear() === divisionData[k].date.getFullYear())) {
-                  let res = [];
-                  res = res.concat(attendeesData.splice(0, j));
-                  res = res.concat(divisionData[k]);
-                  res = res.concat(attendeesData);
-                  attendeesData = res;
-                  exist = true;
-                }
-                // If the date of the current row is equal to the date of the item in the array
-                else if (divisionData[k].date.getMonth() === attendeesData[l].date.getMonth() &&
-                    divisionData[k].date.getFullYear() === attendeesData[l].date.getFullYear()) {
-                  attendeesData[l].nbAttendees += divisionData[k]["Number attendees"];
-                  attendeesData[l].nbInstitutions += divisionData[k]["Number institutions"];
-                  exist = true;
-                }
-              }
-              // Otherwise, the current row is lower (older) than the last item of the array
-              if (!exist) {
-                attendeesData.push(divisionData[k]);
-              }
-              else {
-                exist = false;
-              }
-            }
-            totalAttendees = {
-              titleAttendees: divisionKeys.titleAttendees,
-              titleInstitutions: divisionKeys.titleInstitutions,
-              titleWorkshop: divisionKeys.titleWorkshop,
-              workshops: totalAttendees.workshops + divisionKeys.workshops,
-              data: attendeesData
-            };
-          }
-        }
-      }
-    }
-    data.global.capacitybuilding["attendeesAndInstitutions"] = totalAttendees;
-    return data;
-  }
+  // getTotalAttendeesAndInstitutions(data) {
+  //   let projectName = "";
+  //   let totalAttendees = {
+  //     titleAttendees: "",
+  //     titleInstitutions: "",
+  //     titleWorkshop: "",
+  //     workshops: 0,
+  //     data: []
+  //   };
+  //   let attendeesData = [];
+  //   //We're going through every project except global which is this one
+  //   for (let i = 0; i < Object.keys(data).length; i++) {
+  //     projectName = Object.keys(data)[i];
+  //     if (projectName !== "global") {
+  //       for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
+  //         let subProject = Object.keys(data[projectName])[j];
+  //         if (Object.keys(data[projectName][subProject]).includes("attendeesAndInstitutions")) {
+  //           let divisionKeys = data[projectName][subProject].attendeesAndInstitutions;
+  //           let divisionData = divisionKeys.data;
+  //           let exist = false;
+  //           // This loop is here to add the row in the right array cell in order to have a descending order
+  //           for (let k = 0; k < divisionData.length; k++) {
+  //             for (let l = 0; l < attendeesData.length && !exist; l++) {
+  //               // If the date of the current row is greater (newer) than the item in the array
+  //               if (divisionData[k].date.getFullYear() > attendeesData[l].date.getFullYear() ||
+  //                   (divisionData[k].date.getMonth() > attendeesData[l].date.getFullYear() &&
+  //                       attendeesData[l].date.getFullYear() === divisionData[k].date.getFullYear())) {
+  //                 let attendeesTemp = {
+  //                   extend: divisionData[k].extend,
+  //                   label: divisionData[k].label,
+  //                   date: divisionData[k].date,
+  //                   value: divisionData[k].value
+  //                 };
+  //                 let res = [];
+  //                 res = res.concat(attendeesData.splice(0, j));
+  //                 res = res.push(attendeesTemp);
+  //                 res = res.concat(attendeesData);
+  //                 attendeesData = res;
+  //                 exist = true;
+  //               }
+  //               // If the date of the current row is equal to the date of the item in the array
+  //               else if (divisionData[k].date.getMonth() === attendeesData[l].date.getMonth() &&
+  //                   divisionData[k].date.getFullYear() === attendeesData[l].date.getFullYear()) {
+  //                 attendeesData[l].nbAttendees += divisionData[k]["Number attendees"];
+  //                 attendeesData[l].nbInstitutions += divisionData[k]["Number institutions"];
+  //                 exist = true;
+  //               }
+  //             }
+  //             // Otherwise, the current row is lower (older) than the last item of the array
+  //             if (!exist) {
+  //               attendeesData.push({
+  //                 extend: divisionData[k].extend,
+  //                 label: divisionData[k].label,
+  //                 date: divisionData[k].date,
+  //                 value: divisionData[k].value
+  //               });
+  //             }
+  //             else {
+  //               exist = false;
+  //             }
+  //           }
+  //           totalAttendees = {
+  //             titleAttendees: divisionKeys.titleAttendees,
+  //             titleInstitutions: divisionKeys.titleInstitutions,
+  //             titleWorkshop: divisionKeys.titleWorkshop,
+  //             workshops: totalAttendees.workshops + divisionKeys.workshops,
+  //             data: attendeesData
+  //           };
+  //         }
+  //       }
+  //     }
+  //   }
+  //   data.global.capacitybuilding["attendeesAndInstitutions"] = totalAttendees;
+  //   return data;
+  // }
 
   /** Get the number of map edits **/
   getTotalMapEdits(data) {

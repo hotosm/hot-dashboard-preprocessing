@@ -10,7 +10,7 @@
 /build
 
 # lambda function build
-/dist-preprocess
+/dist-preprocess.zip
 
 # misc
 .DS_Store

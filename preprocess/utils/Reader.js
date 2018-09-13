@@ -33,13 +33,11 @@ class Reader {
   }
 
   /** Get the JSON datas **/
-  getJson(config) {
-    if(config.link) {
-      const url = config.link;
-      const name = config.name;
+  getJson(configUrl, configName) {
+    if(configUrl) {
       return new Promise((resolve, reject) => {
         request(
-            {url: url},
+            {url: configUrl},
             function(err, data){
               if(err !== null){
                 console.error(err);
@@ -52,7 +50,7 @@ class Reader {
         )
       })
           .then((findResponse) => {
-            return this.getPropByString(findResponse, name)
+            return this.getPropByString(findResponse, configName)
           });
     }
     else {

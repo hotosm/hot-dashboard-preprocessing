@@ -43,12 +43,10 @@ class Reader {
   }
 
   /** Get the JSON datas **/
-  getJson(config) {
-    if (config.link) {
-      const url = config.link;
-      const name = config.name;
+  getJson(configUrl, configName) {
+    if (configUrl) {
       return new Promise((resolve, reject) => {
-        (0, _request2.default)({ url: url }, function (err, data) {
+        (0, _request2.default)({ url: configUrl }, function (err, data) {
           if (err !== null) {
             console.error(err);
             reject(err);
@@ -57,7 +55,7 @@ class Reader {
           }
         });
       }).then(findResponse => {
-        return this.getPropByString(findResponse, name);
+        return this.getPropByString(findResponse, configName);
       });
     } else {
       return {};

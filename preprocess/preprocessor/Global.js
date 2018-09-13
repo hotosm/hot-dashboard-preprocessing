@@ -5,7 +5,6 @@ class Global extends AbstractProject{
   constructor(generalData) {
     super(generalData);
     this.functions.push("getTotalSubwards");
-    this.functions.push("getTotalMapEdits");
     this.functions.push("getTotalOrganizationsSupported");
     this.functions.push("getTotalNbAttendeesMonthly");
     this.functions.push("getTotalNbAttendeesInstitutions");
@@ -14,6 +13,7 @@ class Global extends AbstractProject{
     this.functions.push("getTotalNbTrainings");
     this.functions.push("getTotalNbParticipantsGender");
     this.functions.push("getTotalNbParticipantsNew");
+    this.functions.push("getTotalNbParticipantsType");
     this.functions.push("getTotalNbEvents");
   }
 
@@ -86,26 +86,6 @@ class Global extends AbstractProject{
       }
     }
     data.global.main["totalSubwardsCompleted"] = totalSubwardsCompleted;
-    return data;
-  }
-
-  /** Get the number of map edits **/
-  getTotalMapEdits(data) {
-    let totalEdits = 0;
-    let projectName = "";
-    //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
-      if (projectName !== "global") {
-        for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("nbedits")) {
-            totalEdits += data[projectName][subProject].nbedits.data;
-          }
-        }
-      }
-    }
-    data.global.main["totalEditsAggregated"] = totalEdits;
     return data;
   }
 
@@ -544,6 +524,55 @@ class Global extends AbstractProject{
       }
     }
     data.global.main["totalNbParticipantsNew"] = totalNbParticipants;
+    return data;
+  }
+
+  /**
+   * Get the number of participants by event type
+   * @param data - the data fetched by the reader
+   * @returns {*}
+   */
+  getTotalNbParticipantsType(data) {
+    let totalNbParticipants = {};
+    let projectName = "";
+    let nbParticipantsData = [];
+    //We're going through every project except global which is this one
+    for (let i = 0; i < Object.keys(data).length; i++) {
+      projectName = Object.keys(data)[i];
+      if (projectName !== "global") {
+        // Because we know that this kind of data is displayed in the category "community"
+        if (Object.keys(data[projectName].community).includes("nbParticipantsType")) {
+          let divisionKeys = data[projectName].community.nbParticipantsType;
+          let divisionData = divisionKeys.data;
+          let exist = false;
+          // This loop is here to add the row in the right array cell in order to have a descending order
+          for (let k = 0; k < divisionData.length; k++) {
+            for (let l = 0; l < nbParticipantsData.length && !exist; l++) {
+              // If the type of the current row is equal to the one of the item in the array we're iterating on
+              if (nbParticipantsData[l].label === divisionData[k].label) {
+                nbParticipantsData[l].value += divisionData[k].value;
+                exist = true;
+              }
+            }
+            // Otherwise, the current row is lower (older) than the last item of the array
+            if (!exist) {
+              nbParticipantsData.push({
+                label: divisionData[k].label,
+                value: divisionData[k].value
+              });
+            }
+            else {
+              exist = false;
+            }
+          }
+          totalNbParticipants = {
+            title: divisionKeys.title,
+            data: nbParticipantsData
+          };
+        }
+      }
+    }
+    data.global.main["totalNbParticipantsType"] = totalNbParticipants;
     return data;
   }
 

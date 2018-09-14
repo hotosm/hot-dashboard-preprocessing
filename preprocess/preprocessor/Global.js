@@ -18,7 +18,7 @@ class Global extends AbstractProject{
   }
 
   /**
-   * Get the number of events (mapathons) (by year)
+   * Get the number of subwards (by month)
    * @param data - the data fetched by the reader
    * @returns {*}
    */
@@ -27,11 +27,12 @@ class Global extends AbstractProject{
     let projectName = "";
     let subwardsData = [];
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
+          // In order to add the data, every project must have the same key name
           if (Object.keys(data[projectName][subProject]).includes("nbSubwardsCompleted")) {
             let divisionKeys = data[projectName].mapping.nbSubwardsCompleted;
             let divisionData = divisionKeys.data;
@@ -44,6 +45,7 @@ class Global extends AbstractProject{
                 if (divisionDate.getFullYear() > subwardsData[l].date.getFullYear() ||
                     (divisionDate.getMonth() > subwardsData[l].date.getFullYear() &&
                         subwardsData[l].date.getFullYear() === divisionDate.getFullYear())) {
+                  // We create a temp value to store the data in order to not modify it when whe add them
                   let subwardTemp = {
                     extend: divisionData[k].extend,
                     label: divisionData[k].label,
@@ -85,17 +87,22 @@ class Global extends AbstractProject{
         }
       }
     }
+    // We finally append the data to the object
     data.global.main["totalSubwardsCompleted"] = totalSubwardsCompleted;
     return data;
   }
 
-  /** Get the number of organizations supported **/
+  /**
+   * Get the number of organizations supported
+   * @param data - the data fetched by the reader
+   * @returns {*}
+   */
   getTotalOrganizationsSupported(data) {
     let totalOrganizationsSupported = 0;
     let projectName = "";
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
@@ -122,8 +129,8 @@ class Global extends AbstractProject{
     let projectName = "";
     let nbAttendeesData = [];
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
@@ -192,8 +199,8 @@ class Global extends AbstractProject{
     let projectName = "";
     let nbAttendeesData = [];
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
@@ -244,8 +251,8 @@ class Global extends AbstractProject{
     let projectName = "";
     let nbAttendeesData = [];
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
@@ -296,8 +303,8 @@ class Global extends AbstractProject{
     let projectName = "";
     let nbWorkshopsMonthlyData = [];
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
@@ -357,7 +364,7 @@ class Global extends AbstractProject{
   }
 
   /**
-   * Get the number of workshops by month
+   * Get the number of trainings
    * @param data - the data fetched by the reader
    * @returns {*}
    */
@@ -366,8 +373,8 @@ class Global extends AbstractProject{
     let title = "";
     let projectName = "";
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
@@ -395,8 +402,8 @@ class Global extends AbstractProject{
     let projectName = "";
     let nbParticipantsData = [];
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         // Because we know that this kind of data is displayed in the category "community"
         if (Object.keys(data[projectName].community).includes("nbParticipantsGender")) {
@@ -466,8 +473,8 @@ class Global extends AbstractProject{
     let projectName = "";
     let nbParticipantsData = [];
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         // Because we know that this kind of data is displayed in the category "community"
         if (Object.keys(data[projectName].community).includes("nbParticipantsNew")) {
@@ -537,8 +544,8 @@ class Global extends AbstractProject{
     let projectName = "";
     let nbParticipantsData = [];
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         // Because we know that this kind of data is displayed in the category "community"
         if (Object.keys(data[projectName].community).includes("nbParticipantsType")) {
@@ -587,8 +594,8 @@ class Global extends AbstractProject{
     let projectName = "";
     let subProject = "";
     //We're going through every project except global which is this one
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      projectName = Object.keys(data)[i];
+    for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
+      projectName = Object.values(data.projectNames)[i];
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           subProject = Object.keys(data[projectName])[j];

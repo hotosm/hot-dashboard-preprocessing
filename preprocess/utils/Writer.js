@@ -6,7 +6,11 @@ class Writer {
     this.setJson   = this.setJson.bind(this);
   }
 
-  /** Set the JSON datas **/
+  /**
+   * This function writes the preprocessed data to the amazon bucket
+   * @param data
+   * @returns {Promise<void>}
+   */
   setJson(data) {
     return (async () => {
       try {

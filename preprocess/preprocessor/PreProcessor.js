@@ -17,6 +17,14 @@ class PreProcessor {
     this.getDataFromProjectsFile = this.getDataFromProjectsFile.bind(this);
   }
 
+  //------------------------------------------------------------------------//
+  //------------------------------- Utils -------------------------------//
+  //------------------------------------------------------------------------//
+  /**
+   * This function is used to get the key from the url of the google spreadsheet
+   * @param url
+   * @returns {*|string}
+   */
   getFileKey(url) {
     return url.split("/", 6)[5];
   }
@@ -64,7 +72,6 @@ class PreProcessor {
   //------------------------------------------------------------------------//
   //---------------------------------- Data --------------------------------//
   //------------------------------------------------------------------------//
-
   /** Update all datas to the 'allDatasFromAPIwithLinks' value **/
   async getAllDatas(result){
     const allDatasFromAPIwithLinks = result.data;
@@ -96,6 +103,7 @@ class PreProcessor {
             dataGeneratedWithLink.data =
                 await reader.getCsv(allDatasFromAPIwithLinks[i][url], (result) => result.data);
             break;
+            // If the data is comming from a google sheet file
           case "google sheet":
             dataGeneratedWithLink.data =
                 await reader.getCsv(CONFIG.googleEndPoint+ this.getFileKey(allDatasFromAPIwithLinks[i][url])

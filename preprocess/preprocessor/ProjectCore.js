@@ -1,7 +1,7 @@
 import AbstractProject from './AbstractProject'
 import RamaniHuria from "./RamaniHuria";
 
-// This class is the processing the data for the RamaniHuria project
+// This class is processing the data for the core indicators of every project
 class ProjectCore extends AbstractProject {
   constructor(generalData) {
     super(generalData);
@@ -30,7 +30,7 @@ class ProjectCore extends AbstractProject {
     // This variable will be used when data is inserted in the array
     let exist = false;
     // This loop is here to add the row in the right array cell in order to have a descending order
-    // We start at the 4th object because we kno that the firsts columns are 'Population' and 'Area'
+    // We start at the 4th object because we know that the firsts columns are 'Population' and 'Area'
     for (let k = 3; k < Object.keys(nbSubwardsFromData).length; k++) {
       let exist = false;
       let divisionData = Object.values(nbSubwardsFromData)[k];
@@ -69,10 +69,10 @@ class ProjectCore extends AbstractProject {
         // Otherwise, the current row is lower (older) than the last item of the array
         if (!exist) {
           nbSubwards.push({
-            extend: subwardType,
-            label: divisionDate.toUTCString().split(" ", 3)[2] + " " + divisionDate.toUTCString().split(" ", 4)[3],
-            date: divisionDate,
-            value: divisionData
+            extend : subwardType,
+            label  : divisionDate.toUTCString().split(" ", 3)[2] + " " + divisionDate.toUTCString().split(" ", 4)[3],
+            date   : divisionDate,
+            value  : divisionData
           });
         }
         else {
@@ -85,6 +85,7 @@ class ProjectCore extends AbstractProject {
       };
     }
     data.mapping["nbSubwardsCompleted"] = nbSubwardsCompleted;
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.mapping.nbsubwardscompleted;
     return data;
   }
@@ -113,9 +114,9 @@ class ProjectCore extends AbstractProject {
           // This array will store the data to be added in the middle of the old one
           let attendeesTemp = [];
           attendeesTemp.push({
-            date : date,
+            date  : date,
             label : date.toUTCString().split(" ", 3)[2]+" "+date.toUTCString().split(" ", 4)[3],
-            value: attendees[i][nbAttendees]
+            value : attendees[i][nbAttendees]
           });
           // This array will store the ordered data
           let res = [];
@@ -136,9 +137,9 @@ class ProjectCore extends AbstractProject {
       if(!exist) {
         // If so, it also means that there is no data for this month so it's added at the end of the array
         attendeesArray.push({
-          date : date,
+          date  : date,
           label : date.toUTCString().split(" ", 3)[2]+" "+date.toUTCString().split(" ", 4)[3],
-          value: attendees[i][nbAttendees],
+          value : attendees[i][nbAttendees],
         });
       }
       else {
@@ -148,10 +149,11 @@ class ProjectCore extends AbstractProject {
     // This will be the final data stored in the json file
     let nbAttendeesMonthly = {
       title    : data.capacitybuilding.nbattendeesmonthly.title,
-      data              : attendeesArray
+      data     : attendeesArray
     };
     // We store the data calculated in the global data
     data.capacitybuilding["nbAttendeesMonthly"] = nbAttendeesMonthly;
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.capacitybuilding.nbattendeesmonthly;
     return data;
   }
@@ -167,69 +169,69 @@ class ProjectCore extends AbstractProject {
       title: nbAttendeesInstitutionsFromData.title,
       data: [
         {
-          extend: "University of Dar es Salaam and Ardhi University",
-          label: "DSAU",
-          value : 0
+          extend : "University of Dar es Salaam and Ardhi University",
+          label  : "DSAU",
+          value  : 0
         },
         {
-          extend: "WB Consultants",
-          label: "WB",
-          value : 0
+          extend : "WB Consultants",
+          label  : "WB",
+          value  : 0
         },
         {
-          extend: "Red Cross",
-          label: "RC",
-          value : 0
+          extend : "Red Cross",
+          label  : "RC",
+          value  : 0
         },
         {
-          extend: "Municipal Councils representative",
-          label: "MCR",
-          value : 0
+          extend : "Municipal Councils representative",
+          label  : "MCR",
+          value  : 0
         },
         {
-          extend: "City Council Representatives",
-          label: "CCR",
-          value : 0
+          extend : "City Council Representatives",
+          label  : "CCR",
+          value  : 0
         },
         {
-          extend: "National Bureau of Statistics",
-          label: "NBS",
-          value : 0
+          extend : "National Bureau of Statistics",
+          label  : "NBS",
+          value  : 0
         },
         {
-          extend: "Energy and Water Utility Regulatory Authority",
-          label: "EWA",
-          value : 0
+          extend : "Energy and Water Utility Regulatory Authority",
+          label  : "EWA",
+          value  : 0
         },
         {
-          extend: "Ministry of Health",
-          label: "MoH",
-          value : 0
+          extend : "Ministry of Health",
+          label  : "MoH",
+          value  : 0
         },
         {
-          extend: "Ministry of Water (DAWASA & DAWASCO)",
-          label: "MoW",
-          value : 0
+          extend : "Ministry of Water (DAWASA & DAWASCO)",
+          label  : "MoW",
+          value  : 0
         },
         {
-          extend: "Tanzania Petroleum Development Corporation",
-          label: "TPDC",
-          value : 0
+          extend : "Tanzania Petroleum Development Corporation",
+          label  : "TPDC",
+          value  : 0
         },
         {
-          extend: "Commission of Science and Technology",
-          label: "CST",
-          value : 0
+          extend : "Commission of Science and Technology",
+          label  : "CST",
+          value  : 0
         },
         {
-          extend: "Local Government Authority (LGA) leaders",
-          label: "LGA",
-          value : 0
+          extend : "Local Government Authority (LGA) leaders",
+          label  : "LGA",
+          value  : 0
         },
         {
-          extend: "Community members",
-          label: "CM",
-          value : 0
+          extend : "Community members",
+          label  : "CM",
+          value  : 0
         }
       ]
     };
@@ -254,26 +256,27 @@ class ProjectCore extends AbstractProject {
     let nbAttendeesTrainingFromData = data.capacitybuilding.nbattendeestraining.data;
     let nbAttendeesTraining = {
       title: data.capacitybuilding.nbattendeestraining.title,
+      // We're forced to hardcode these data because it's the row headers and that's what we will use to fetch the data
       data: [
         {
-          extend: "Drainage mapping",
-          label: "Drainage",
-          value : 0
+          extend : "Drainage mapping",
+          label  : "Drainage",
+          value  : 0
         },
         {
-          extend: "OSM",
-          label: "OSM",
-          value : 0
+          extend : "OSM",
+          label  : "OSM",
+          value  : 0
         },
         {
-          extend: "ODK Form Management and Data Collection",
-          label: "ODK",
-          value : 0
+          extend : "ODK Form Management and Data Collection",
+          label  : "ODK",
+          value  : 0
         },
         {
-          extend: "OsmAnd application and Map Reading",
-          label: "Osm & Map",
-          value : 0
+          extend : "OsmAnd application and Map Reading",
+          label  : "Osm & Map",
+          value  : 0
         }
       ]
     };
@@ -286,6 +289,7 @@ class ProjectCore extends AbstractProject {
     }
     // We store the data calculated in the global data
     data.capacitybuilding["nbAttendeesTraining"] = nbAttendeesTraining;
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.capacitybuilding.nbattendeestraining;
     return data;
   }
@@ -320,20 +324,21 @@ class ProjectCore extends AbstractProject {
         if (nbWorkshopsFiltered.length > 0) {
           nbWorkshops[counter] =
               {
-                value: nbWorkshopsFiltered.length,
-                date: (new Date(nbWorkshopsFiltered[0][endDate])),
-                label: (new Date(nbWorkshopsFiltered[0][endDate])).toUTCString().split(" ", 3)[2]+" "+(new Date(nbWorkshopsFiltered[0][endDate])).toUTCString().split(" ", 4)[3]
+                value : nbWorkshopsFiltered.length,
+                date  : (new Date(nbWorkshopsFiltered[0][endDate])),
+                label : (new Date(nbWorkshopsFiltered[0][endDate])).toUTCString().split(" ", 3)[2]+" "+(new Date(nbWorkshopsFiltered[0][endDate])).toUTCString().split(" ", 4)[3]
               };
           counter++;
         }
       }
     }
     let nbWorkshopsStored = {
-      title: data.capacitybuilding.nbworkshopsmonthly.title,
-      data: nbWorkshops
+      title : data.capacitybuilding.nbworkshopsmonthly.title,
+      data  : nbWorkshops
     };
     // We store the data calculated in the global data
     data.capacitybuilding["nbWorkshopsMonthly"] = nbWorkshopsStored;
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.capacitybuilding.nbworkshopsmonthly;
     return data;
   }
@@ -344,10 +349,12 @@ class ProjectCore extends AbstractProject {
    * @returns {object}
    */
   getNbTrainings(data) {
+    // The number of trainings is only the number of line of the data
     data.capacitybuilding["nbTrainings"] = {
       title: data.capacitybuilding.nbtrainings.title,
       value: data.capacitybuilding.nbtrainings.data.length
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.capacitybuilding.nbtrainings;
     return data;
   }
@@ -362,6 +369,7 @@ class ProjectCore extends AbstractProject {
       title: data.community.nbevents.title,
       value: data.community.nbevents.data.filter(row => row["No."] !== "").length
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.community.nbevents;
     return data;
   }
@@ -387,10 +395,10 @@ class ProjectCore extends AbstractProject {
             // This array will store the data to be added in the middle of the old one
             let participantTemp = [];
             participantTemp.push({
-              date: date,
-              label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
-              female: nbParticipantsFromData[i].Female === "" ? 0 : nbParticipantsFromData[i].Female,
-              male: nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male
+              date   : date,
+              label  : date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
+              female : nbParticipantsFromData[i].Female === "" ? 0 : nbParticipantsFromData[i].Female,
+              male   : nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male
             });
             // This array will store the ordered data
             let res = [];
@@ -404,7 +412,7 @@ class ProjectCore extends AbstractProject {
           else if (nbParticipants[j].date.getMonth() === date.getMonth() && nbParticipants[j].date.getFullYear() === date.getFullYear()) {
             // We update the values of the data
             nbParticipants[j].female += nbParticipantsFromData[i].Female;
-            nbParticipants[j].male += nbParticipantsFromData[i].Male;
+            nbParticipants[j].male   += nbParticipantsFromData[i].Male;
             exist = true;
           }
         }
@@ -412,10 +420,10 @@ class ProjectCore extends AbstractProject {
         if (!exist) {
           // If so, it also means that there is no data for this month so it's added at the end of the array
           nbParticipants.push({
-            date: date,
-            label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
-            female: nbParticipantsFromData[i].Female === "" ? 0 : nbParticipantsFromData[i].Female,
-            male: nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male
+            date   : date,
+            label  : date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
+            female : nbParticipantsFromData[i].Female === "" ? 0 : nbParticipantsFromData[i].Female,
+            male   : nbParticipantsFromData[i].Male === "" ? 0 : nbParticipantsFromData[i].Male
           });
         }
         else {
@@ -428,6 +436,7 @@ class ProjectCore extends AbstractProject {
       title: data.community.nbparticipantsgender.title,
       data: nbParticipants
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.community.nbparticipantsgender;
     return data;
   }
@@ -453,10 +462,10 @@ class ProjectCore extends AbstractProject {
             // This array will store the data to be added in the middle of the old one
             let participantTemp = [];
             participantTemp.push({
-              date: date,
-              label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
-              new: nbParticipantsFromData[i].New === "" ? 0 : nbParticipantsFromData[i].New,
-              old: nbParticipantsFromData[i].Old === "" ? 0 : nbParticipantsFromData[i].Old
+              date  : date,
+              label : date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
+              new   : nbParticipantsFromData[i].New === "" ? 0 : nbParticipantsFromData[i].New,
+              old   : nbParticipantsFromData[i].Old === "" ? 0 : nbParticipantsFromData[i].Old
             });
             // This array will store the ordered data
             let res = [];
@@ -478,10 +487,10 @@ class ProjectCore extends AbstractProject {
         if (!exist) {
           // If so, it also means that there is no data for this month so it's added at the end of the array
           nbParticipants.push({
-            date: date,
-            label: date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
-            new: nbParticipantsFromData[i].New === "" ? 0 : nbParticipantsFromData[i].New,
-            old: nbParticipantsFromData[i].Old === "" ? 0 : nbParticipantsFromData[i].Old
+            date  : date,
+            label : date.toUTCString().split(" ", 3)[2] + " " + date.toUTCString().split(" ", 4)[3],
+            new   : nbParticipantsFromData[i].New === "" ? 0 : nbParticipantsFromData[i].New,
+            old   : nbParticipantsFromData[i].Old === "" ? 0 : nbParticipantsFromData[i].Old
           });
         }
         else {
@@ -494,12 +503,13 @@ class ProjectCore extends AbstractProject {
       title: data.community.nbparticipantsnew.title,
       data: nbParticipants
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.community.nbparticipantsnew;
     return data;
   }
 
   /**
-   * Get the number of participants of each event focusing on the old/new division
+   * Get the number of participants of each event focusing on the event type
    * @param data - the data fetched by the reader
    * @returns {object} The data with the attribute "nbParticipants" containing the data for the corresponding indicator and the title
    */
@@ -522,8 +532,8 @@ class ProjectCore extends AbstractProject {
         if (!exist) {
           // If so, it means that there is no data for this event type so it's added at the end of the array
           nbParticipants.push({
-            label: nbParticipantsFromData[i].Type,
-            value: nbParticipantsFromData[i].Number === "" ? 0 : nbParticipantsFromData[i].Number
+            label : nbParticipantsFromData[i].Type,
+            value : nbParticipantsFromData[i].Number === "" ? 0 : nbParticipantsFromData[i].Number
           });
         }
         else {
@@ -536,6 +546,7 @@ class ProjectCore extends AbstractProject {
       title: data.community.nbparticipantstype.title,
       data: nbParticipants
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.community.nbparticipantstype;
     return data;
   }

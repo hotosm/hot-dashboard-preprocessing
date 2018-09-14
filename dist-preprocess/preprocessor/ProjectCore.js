@@ -14,7 +14,7 @@ var _RamaniHuria2 = _interopRequireDefault(_RamaniHuria);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// This class is the processing the data for the RamaniHuria project
+// This class is processing the data for the core indicators of every project
 class ProjectCore extends _AbstractProject2.default {
   constructor(generalData) {
     super(generalData);
@@ -43,7 +43,7 @@ class ProjectCore extends _AbstractProject2.default {
     // This variable will be used when data is inserted in the array
     let exist = false;
     // This loop is here to add the row in the right array cell in order to have a descending order
-    // We start at the 4th object because we kno that the firsts columns are 'Population' and 'Area'
+    // We start at the 4th object because we know that the firsts columns are 'Population' and 'Area'
     for (let k = 3; k < Object.keys(nbSubwardsFromData).length; k++) {
       let exist = false;
       let divisionData = Object.values(nbSubwardsFromData)[k];
@@ -94,6 +94,7 @@ class ProjectCore extends _AbstractProject2.default {
       };
     }
     data.mapping["nbSubwardsCompleted"] = nbSubwardsCompleted;
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.mapping.nbsubwardscompleted;
     return data;
   }
@@ -160,6 +161,7 @@ class ProjectCore extends _AbstractProject2.default {
     };
     // We store the data calculated in the global data
     data.capacitybuilding["nbAttendeesMonthly"] = nbAttendeesMonthly;
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.capacitybuilding.nbattendeesmonthly;
     return data;
   }
@@ -248,6 +250,7 @@ class ProjectCore extends _AbstractProject2.default {
     let nbAttendeesTrainingFromData = data.capacitybuilding.nbattendeestraining.data;
     let nbAttendeesTraining = {
       title: data.capacitybuilding.nbattendeestraining.title,
+      // We're forced to hardcode these data because it's the row headers and that's what we will use to fetch the data
       data: [{
         extend: "Drainage mapping",
         label: "Drainage",
@@ -275,6 +278,7 @@ class ProjectCore extends _AbstractProject2.default {
     }
     // We store the data calculated in the global data
     data.capacitybuilding["nbAttendeesTraining"] = nbAttendeesTraining;
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.capacitybuilding.nbattendeestraining;
     return data;
   }
@@ -321,6 +325,7 @@ class ProjectCore extends _AbstractProject2.default {
     };
     // We store the data calculated in the global data
     data.capacitybuilding["nbWorkshopsMonthly"] = nbWorkshopsStored;
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.capacitybuilding.nbworkshopsmonthly;
     return data;
   }
@@ -331,10 +336,12 @@ class ProjectCore extends _AbstractProject2.default {
    * @returns {object}
    */
   getNbTrainings(data) {
+    // The number of trainings is only the number of line of the data
     data.capacitybuilding["nbTrainings"] = {
       title: data.capacitybuilding.nbtrainings.title,
       value: data.capacitybuilding.nbtrainings.data.length
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.capacitybuilding.nbtrainings;
     return data;
   }
@@ -349,6 +356,7 @@ class ProjectCore extends _AbstractProject2.default {
       title: data.community.nbevents.title,
       value: data.community.nbevents.data.filter(row => row["No."] !== "").length
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.community.nbevents;
     return data;
   }
@@ -414,6 +422,7 @@ class ProjectCore extends _AbstractProject2.default {
       title: data.community.nbparticipantsgender.title,
       data: nbParticipants
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.community.nbparticipantsgender;
     return data;
   }
@@ -479,12 +488,13 @@ class ProjectCore extends _AbstractProject2.default {
       title: data.community.nbparticipantsnew.title,
       data: nbParticipants
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.community.nbparticipantsnew;
     return data;
   }
 
   /**
-   * Get the number of participants of each event focusing on the old/new division
+   * Get the number of participants of each event focusing on the event type
    * @param data - the data fetched by the reader
    * @returns {object} The data with the attribute "nbParticipants" containing the data for the corresponding indicator and the title
    */
@@ -520,6 +530,7 @@ class ProjectCore extends _AbstractProject2.default {
       title: data.community.nbparticipantstype.title,
       data: nbParticipants
     };
+    // We remove the data because it has been processed so we don't need it anymore
     delete data.community.nbparticipantstype;
     return data;
   }

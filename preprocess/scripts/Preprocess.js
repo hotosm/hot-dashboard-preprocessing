@@ -13,8 +13,11 @@ class Preprocess {
   }
 
   async process() {
+    const projectName = "project name";
     let projectsFromAPI = [];
-    let dataFromAPI = {};
+    let dataFromAPI = {
+      projectNames: {}
+    };
 
     //  1. Get the projects
     try {
@@ -26,7 +29,10 @@ class Preprocess {
     // 2. Get the indicators
     try {
       for (let i = 0; i < projectsFromAPI.length; i++) {
-        dataFromAPI[projectsFromAPI[i]["project name"]] = await
+        // Because some project name have spaces, we would remove them in order to get acces easily to the data
+        dataFromAPI.projectNames[projectsFromAPI[i][projectName]] = projectsFromAPI[i][projectName].toLowerCase().replace(/\s+/g, '');
+        // https://stackoverflow.com/questions/5964373/is-there-a-difference-between-s-g-and-s-g
+        dataFromAPI[projectsFromAPI[i][projectName].toLowerCase().replace(/\s+/g, '')] = await
             this.preProcessingService.getDataFromProjects(projectsFromAPI, i);
       }
     } catch (e) {
@@ -37,7 +43,7 @@ class Preprocess {
     try {
       let project = {};
       for (let i = 0; i < projectsFromAPI.length; i++) {
-        switch (projectsFromAPI[i]["project name"].toLowerCase()) {
+        switch (dataFromAPI["projectNames"][projectsFromAPI[i][projectName]]) {
           case "ramanihuria":
             project = new RamaniHuria(dataFromAPI.ramanihuria);
             dataFromAPI.ramanihuria = project.process();
@@ -66,6 +72,12 @@ class Preprocess {
   }
 }
 
+/**
+ * This is the entrypoint for the lambda function
+ * @param event
+ * @param context
+ * @param callback
+ */
 exports.default = function(event, context, callback) {
   try {
     new Preprocess().process();

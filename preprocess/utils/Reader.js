@@ -7,7 +7,11 @@ class Reader {
     this.getJson   = this.getJson.bind(this);
   }
 
-   /** Get the CSV datas **/
+  /**
+   * Get the CSV datas
+   * We use the Papaparse library in order to get a JSON file from a csv
+   * https://www.papaparse.com/docs
+   */
   getCsv(uri, callback) {
     return new Promise((resolve, reject) => {
       request(
@@ -32,7 +36,13 @@ class Reader {
     });
   }
 
-  /** Get the JSON datas **/
+  /**
+   * Get the JSON datas
+   * This function fetch a json data with a get request to the url
+   * @param configUrl the URL of the JSON file
+   * @param configName the name of the attribute to get from the JSON
+   * @returns {*}
+   */
   getJson(configUrl, configName) {
     if(configUrl) {
       return new Promise((resolve, reject) => {

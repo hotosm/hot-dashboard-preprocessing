@@ -1,5 +1,7 @@
 import AbstractProject from './AbstractProject'
-import RamaniHuria from "./RamaniHuria";
+// import PDC from "./PDC"
+// import RamaniHuria from "./RamaniHuria"
+
 
 // This class is processing the data for the core indicators of every project
 class ProjectCore extends AbstractProject {
@@ -23,6 +25,7 @@ class ProjectCore extends AbstractProject {
    * @returns {object}
    */
   getNbSubwards(data) {
+    
     let nbSubwardsCompleted = {};
     // This array will hold the final data
     let nbSubwards = [];
@@ -97,6 +100,7 @@ class ProjectCore extends AbstractProject {
    * The advantage to have an descending array allow us to display the last 6 months or the last 3 months according to our needs
    */
   getNbAttendeesMonthly(data) {
+    console.log('getNbAttendeesMonthly')
     const nbAttendees = "Number attendees";
     const endDate = "End date";
 
@@ -164,77 +168,145 @@ class ProjectCore extends AbstractProject {
    * @returns {object} The data with the attribute "nbAttendeesMonthly" containing the data for the corresponding indicator : number workshops attendees per institutions
    */
   getNbAttendeesInstitutions(data) {
+    console.log('getNbAttendeesInstitutions')
     let nbAttendeesInstitutionsFromData = data.capacitybuilding.nbattendeesinstitutions;
-    let nbAttendeesInstitutions = {
-      title: nbAttendeesInstitutionsFromData.title,
-      data: [
-        {
-          extend : "University of Dar es Salaam and Ardhi University",
-          label  : "DSAU",
+    let nbAttendeesInstitutions;
+    let constructorName = this.constructor.name;
+    if (constructorName === 'RamaniHuria'){
+      nbAttendeesInstitutions = {
+        title: nbAttendeesInstitutionsFromData.title,
+        data: [
+          {
+            extend : "University of Dar es Salaam and Ardhi University",
+            label  : "DSAU",
+            value  : 0
+          },
+          {
+            extend : "WB Consultants",
+            label  : "WB",
+            value  : 0
+          },
+          {
+            extend : "Red Cross",
+            label  : "RC",
+            value  : 0
+          },
+          {
+            extend : "Municipal Councils representative",
+            label  : "MCR",
+            value  : 0
+          },
+          {
+            extend : "City Council Representatives",
+            label  : "CCR",
+            value  : 0
+          },
+          {
+            extend : "National Bureau of Statistics",
+            label  : "NBS",
+            value  : 0
+          },
+          {
+            extend : "Energy and Water Utility Regulatory Authority",
+            label  : "EWA",
+            value  : 0
+          },
+          {
+            extend : "Ministry of Health",
+            label  : "MoH",
+            value  : 0
+          },
+          {
+            extend : "Ministry of Water (DAWASA & DAWASCO)",
+            label  : "MoW",
+            value  : 0
+          },
+          {
+            extend : "Tanzania Petroleum Development Corporation",
+            label  : "TPDC",
+            value  : 0
+          },
+          {
+            extend : "Commission of Science and Technology",
+            label  : "CST",
+            value  : 0
+          },
+          {
+            extend : "Local Government Authority (LGA) leaders",
+            label  : "LGA",
+            value  : 0
+          },
+          {
+            extend : "Community members",
+            label  : "CM",
+            value  : 0
+          }
+        ]} 
+   } else if (constructorName === 'PDC'){
+      nbAttendeesInstitutions = {
+        title: nbAttendeesInstitutionsFromData.title,
+        data: [{
+          extend : "Surabaya Institute of Technology",
+          label  : "SIT",
           value  : 0
         },
         {
-          extend : "WB Consultants",
-          label  : "WB",
+          extend : "University of Indonesia",
+          label  : "UoI",
           value  : 0
         },
         {
-          extend : "Red Cross",
-          label  : "RC",
+          extend : "Semarang State University",
+          label  : "SSU",
+          value  : 0
+        },	
+        {
+          extend : "Public Works Ministry",
+          label  : "PWM",
           value  : 0
         },
         {
-          extend : "Municipal Councils representative",
-          label  : "MCR",
+          extend : "Ministry of Tourism	",
+          label  : "MoTr",
           value  : 0
         },
         {
-          extend : "City Council Representatives",
-          label  : "CCR",
+          extend : "Department of Politic and Local Government",
+          label  : "DoPLG",
           value  : 0
         },
         {
-          extend : "National Bureau of Statistics",
-          label  : "NBS",
+          extend : "Ministry of Transportation",
+          label  : "MoT",
           value  : 0
         },
         {
-          extend : "Energy and Water Utility Regulatory Authority",
-          label  : "EWA",
+          extend : "Ministry of Agriculture",
+          label  : "MoA",
           value  : 0
         },
         {
-          extend : "Ministry of Health",
-          label  : "MoH",
+          extend : "City Planning Council",
+          label  : "SIT",
           value  : 0
         },
         {
-          extend : "Ministry of Water (DAWASA & DAWASCO)",
-          label  : "MoW",
+          extend : "East Java Local Disaster Management Agency",
+          label  : "EJLDMA",
           value  : 0
         },
         {
-          extend : "Tanzania Petroleum Development Corporation",
-          label  : "TPDC",
+          extend : "Jakarta Local Disaster Management Agency",
+          label  : "JLDMA",
           value  : 0
         },
         {
-          extend : "Commission of Science and Technology",
-          label  : "CST",
+          extend : "Semarang Local Disaster Management Agency",
+          label  : "SLDMA",
           value  : 0
-        },
-        {
-          extend : "Local Government Authority (LGA) leaders",
-          label  : "LGA",
-          value  : 0
-        },
-        {
-          extend : "Community members",
-          label  : "CM",
-          value  : 0
-        }
-      ]
-    };
+        }	
+      ]}
+    }
     for (let i = 0; i < nbAttendeesInstitutionsFromData.data.length; i++) {
       for (let j = 0; j < nbAttendeesInstitutions.data.length; j++) {
         nbAttendeesInstitutions.data[j].value += nbAttendeesInstitutionsFromData.data[i][nbAttendeesInstitutions.data[j].extend];
@@ -252,34 +324,88 @@ class ProjectCore extends AbstractProject {
    * @returns {object} The data with the attribute "nbAttendeesTraining" containing the data for the corresponding indicator : number workshops attendees per training type
    */
   getNbAttendeesTraining(data) {
+    console.log('getNbAttendeesTraining')
     const nbAttendees = "Number attendees";
     let nbAttendeesTrainingFromData = data.capacitybuilding.nbattendeestraining.data;
-    let nbAttendeesTraining = {
-      title: data.capacitybuilding.nbattendeestraining.title,
-      // We're forced to hardcode these data because it's the row headers and that's what we will use to fetch the data
-      data: [
-        {
-          extend : "Drainage mapping",
-          label  : "Drainage",
-          value  : 0
-        },
-        {
-          extend : "OSM",
-          label  : "OSM",
-          value  : 0
-        },
-        {
-          extend : "ODK Form Management and Data Collection",
-          label  : "ODK",
-          value  : 0
-        },
-        {
-          extend : "OsmAnd application and Map Reading",
-          label  : "Osm & Map",
-          value  : 0
-        }
-      ]
-    };
+    let nbAttendeesTraining;
+    let constructorName = this.constructor.name;
+    if (constructorName === 'RamaniHuria'){
+      nbAttendeesTraining = {
+        title: data.capacitybuilding.nbattendeestraining.title,
+        // We're forced to hardcode these data because it's the row headers and that's what we will use to fetch the data
+        data: [
+          {
+            extend : "Drainage mapping",
+            label  : "Drainage",
+            value  : 0
+          },
+          {
+            extend : "OSM",
+            label  : "OSM",
+            value  : 0
+          },
+          {
+            extend : "ODK Form Management and Data Collection",
+            label  : "ODK",
+            value  : 0
+          },
+          {
+            extend : "OsmAnd application and Map Reading",
+            label  : "Osm & Map",
+            value  : 0
+          }
+        ]
+      };
+    } else if (constructorName === 'PDC') {
+      nbAttendeesTraining = {
+        title: data.capacitybuilding.nbattendeestraining.title,
+        // We're forced to hardcode these data because it's the row headers and that's what we will use to fetch the data
+        data: [
+          {
+            extend : "OSM",
+            label  : "OSM",
+            value  : 0
+          },
+          {
+            extend : "ODK Form Management and Data Collection",
+            label  : "ODK",
+            value  : 0
+          },
+          {
+            extend : "JOSM",
+            label  : "JOSM",
+            value  : 0
+          },
+          {
+            extend : "Tasking Manager",
+            label  : "TM",
+            value  : 0
+          },
+          {
+            extend : "HOT Export",
+            label  : "Export",
+            value  : 0
+          },
+          {
+            extend : "QGIS",
+            label  : "QGIS",
+            value  : 0
+          },
+          {
+            extend : "InAWARE",
+            label  : "InAWARE",
+            value  : 0
+          },
+          {
+            extend : "InaSAFE",
+            label  : "InaSAFE",
+            value  : 0
+          }
+                  
+        ]
+      };
+    }
+    
     for (let i = 0; i < nbAttendeesTrainingFromData.length; i++) {
       for (let j = 0; j < nbAttendeesTraining.data.length; j++) {
         if (nbAttendeesTrainingFromData[i][nbAttendeesTraining.data[j].extend] !== 0) {
@@ -301,6 +427,7 @@ class ProjectCore extends AbstractProject {
    * The advantage to have an descending array allow us to display the last 6 months or the last 3 months according to our needs
    */
   getNbWorkshopsMonthly(data) {
+    console.log('getNbWorkshopsMonthly')
     const endDate = "End date";
     let yearMax = (new Date().getFullYear());
     let currentMonth = (new Date().getMonth());
@@ -349,6 +476,7 @@ class ProjectCore extends AbstractProject {
    * @returns {object}
    */
   getNbTrainings(data) {
+    console.log('getNbTrainings')
     // The number of trainings is only the number of line of the data
     data.capacitybuilding["nbTrainings"] = {
       title: data.capacitybuilding.nbtrainings.title,
@@ -365,6 +493,7 @@ class ProjectCore extends AbstractProject {
    * @returns {object} The data with the attribute "nbEvents" containing the data for the corresponding indicator and the title
    */
   getNbEvents(data) {
+    console.log('getNbEvents')
     data.community["nbEvents"] = {
       title: data.community.nbevents.title,
       value: data.community.nbevents.data.filter(row => row["No."] !== "").length
@@ -380,6 +509,7 @@ class ProjectCore extends AbstractProject {
    * @returns {object} The data with the attribute "nbParticipants" containing the data for the corresponding indicator and the title
    */
   getNbParticipantsGender(data) {
+    console.log('getNbParticipantsGender')
     let nbParticipantsFromData = data.community.nbparticipantsgender.data;
     // This array will hold the final data
     let nbParticipants = [];
@@ -447,6 +577,7 @@ class ProjectCore extends AbstractProject {
    * @returns {object} The data with the attribute "nbParticipants" containing the data for the corresponding indicator and the title
    */
   getNbParticipantsNew(data) {
+    console.log('getNbParticipantsNew')
     let nbParticipantsFromData = data.community.nbparticipantsnew.data;
     // This array will hold the final data
     let nbParticipants = [];
@@ -514,6 +645,7 @@ class ProjectCore extends AbstractProject {
    * @returns {object} The data with the attribute "nbParticipants" containing the data for the corresponding indicator and the title
    */
   getNbParticipantsType(data) {
+    console.log('getNbParticipantsType')
     let nbParticipantsFromData = data.community.nbparticipantstype.data;
     // This array will hold the final data
     let nbParticipants = [];

@@ -10,12 +10,11 @@ var _ProjectCore2 = _interopRequireDefault(_ProjectCore);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// This class is processing the data for the RamaniHuria project
-class RamaniHuria extends _ProjectCore2.default {
-  constructor(generalData, name) {
+// This class is processing the data for the PDC project
+class PDC extends _ProjectCore2.default {
+  constructor(generalData) {
     super(generalData);
-    console.log('name: ', name);
   }
 }
 
-exports.default = RamaniHuria;
+exports.default = PDC;

@@ -39,6 +39,7 @@ class PreProcessor {
       reader.getCsv(CONFIG.googleEndPoint+ CONFIG.projects[0]
           + CONFIG.googleSheetEndUrl + CONFIG.projects[1], this.getDataFromProjectsFile)
           .then((allProjects) =>{
+            // console.log('allProjects: ', allProjects)
             resolve(allProjects);
           })
           .catch((error) =>{
@@ -65,6 +66,7 @@ class PreProcessor {
   //------------------------------- Projects -------------------------------//
   //------------------------------------------------------------------------//
   getDataFromProjectsFile(result){
+    console.log('Result: ', result)
     return result.data;
   }
 
@@ -75,6 +77,7 @@ class PreProcessor {
   /** Update all datas to the 'allDatasFromAPIwithLinks' value **/
   async getAllDatas(result){
     const allDatasFromAPIwithLinks = result.data;
+    console.log('getAllDatas: ', allDatasFromAPIwithLinks)
     let generalData = {
       mapping: {},
       capacitybuilding: {},
@@ -94,6 +97,7 @@ class PreProcessor {
         };
         switch (allDatasFromAPIwithLinks[i].type.toLowerCase()) {
             // If there is a JSON file or if it is an API
+          case "raw":
           case "api":
           case "json":
             dataGeneratedWithLink.data = await reader.getJson(allDatasFromAPIwithLinks[i][url], allDatasFromAPIwithLinks[i].name);

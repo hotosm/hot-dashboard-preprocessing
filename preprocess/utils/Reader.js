@@ -4,7 +4,8 @@ import request from 'request';
 class Reader {
   constructor() {
     this.getCsv   = this.getCsv.bind(this);
-    this.getJson   = this.getJson.bind(this);
+    this.getJson  = this.getJson.bind(this);
+    this.getAPI   = this.getAPI.bind(this);
   }
 
   /**
@@ -90,6 +91,26 @@ class Reader {
       }
     }
     return object[props[i]]; // return you value requested in the parameter "propertyString"
+  }
+
+  /**
+   * Get API data
+   */
+  getAPI(url, callback) {
+    return new Promise((resolve, reject) => {
+      request(
+        {url: url},
+        function (err, data) {
+          if(err !== null){
+            console.error(err);
+            reject(err);
+          }
+          else {
+            resolve(data.body);
+          }
+        }
+      );
+    });
   }
 }
 

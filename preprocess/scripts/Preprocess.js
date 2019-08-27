@@ -3,6 +3,7 @@ import Global from "../preprocessor/Global";
 import RamaniHuria from "../preprocessor/RamaniHuria";
 import PDC from "../preprocessor/PDC";
 import OpenCitiesAccra from "../preprocessor/OpenCitiesAccra";
+import Rollup from "../preprocessor/Rollup";
 import Writer from "../utils/Writer";
 
 // This is used to call the Writer anywhere (it's used to post data to the AWS bucket)
@@ -60,6 +61,10 @@ class Preprocess {
             console.log('opencitiesaccra')
             dataFromAPI.opencitiesaccra = project.process();
             break;
+          case "rollup":
+            project = new Rollup(dataFromAPI.rollup, 'rollup');
+            console.log('rollup')
+            dataFromAPI.rollup = project.process();
           default:
             break;
         }

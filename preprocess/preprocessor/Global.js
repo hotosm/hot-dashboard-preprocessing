@@ -23,12 +23,14 @@ class Global extends AbstractProject{
    * @returns {*}
    */
   getTotalSubwards(data) {
+    console.log('getTotalSubwards')
     let totalSubwardsCompleted = {};
     let projectName = "";
     let subwardsData = [];
     //We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
+      console.log('projectName: ', projectName)
       if (projectName !== "global") {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
@@ -83,6 +85,7 @@ class Global extends AbstractProject{
               title: divisionKeys.title,
               data: subwardsData
             };
+            console.log('totalSubwardsCompleted: ', totalSubwardsCompleted)
           }
         }
       }
@@ -257,8 +260,11 @@ class Global extends AbstractProject{
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           let subProject = Object.keys(data[projectName])[j];
           if (Object.keys(data[projectName][subProject]).includes("nbAttendeesTraining")) {
+            console.log(' data[projectName][subProject]: ',  data[projectName][subProject])
             let divisionKeys = data[projectName][subProject].nbAttendeesTraining;
-            let divisionData = divisionKeys.data;
+            console.log('divisionKeys: ', divisionKeys)
+            if (divisionKeys.data){
+              let divisionData = divisionKeys.data;
             let exist = false;
             // This loop is here to add the row in the right array cell in order to have a descending order
             for (let k = 0; k < divisionData.length; k++) {
@@ -286,6 +292,8 @@ class Global extends AbstractProject{
               data: nbAttendeesData
             };
           }
+            }
+            
         }
       }
     }
@@ -425,7 +433,7 @@ class Global extends AbstractProject{
                   male: divisionData[k].male
                 };
                 let res = [];
-                res = res.concat(nbParticipantsData.splice(0, j));
+                res = res.concat(nbParticipantsData.splice(0, l));
                 res.push(nbParticipantsTemp);
                 res = res.concat(nbParticipantsData);
                 nbParticipantsData = res;
@@ -496,8 +504,8 @@ class Global extends AbstractProject{
                   old: divisionData[k].old
                 };
                 let res = [];
-                res = res.concat(nbParticipantsData.splice(0, j));
-                res;push(nbParticipantTemp);
+                res = res.concat(nbParticipantsData.splice(0, l));
+                res.push(nbParticipantTemp);
                 res = res.concat(nbParticipantsData);
                 nbParticipantsData = res;
                 exist = true;

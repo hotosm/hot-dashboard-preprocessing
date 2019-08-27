@@ -12,6 +12,10 @@ var _RamaniHuria = require("../preprocessor/RamaniHuria");
 
 var _RamaniHuria2 = _interopRequireDefault(_RamaniHuria);
 
+var _PDC = require("../preprocessor/PDC");
+
+var _PDC2 = _interopRequireDefault(_PDC);
+
 var _DummyProject = require("../preprocessor/DummyProject");
 
 var _DummyProject2 = _interopRequireDefault(_DummyProject);
@@ -61,8 +65,14 @@ class Preprocess {
       for (let i = 0; i < projectsFromAPI.length; i++) {
         switch (dataFromAPI["projectNames"][projectsFromAPI[i][projectName]]) {
           case "ramanihuria":
-            project = new _RamaniHuria2.default(dataFromAPI.ramanihuria);
+            project = new _RamaniHuria2.default(dataFromAPI.ramanihuria, 'ramanihuria');
+            console.log('ramanihuria');
             dataFromAPI.ramanihuria = project.process();
+            break;
+          case "pdc":
+            project = new _PDC2.default(dataFromAPI.pdc, 'pdc');
+            console.log('pdc');
+            dataFromAPI.pdc = project.process();
             break;
           case "dummyproject":
             project = new _DummyProject2.default(dataFromAPI.dummyproject);

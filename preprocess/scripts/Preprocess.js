@@ -1,6 +1,7 @@
 import preProcessingService from "../preprocessor/PreProcessor";
 import Global from "../preprocessor/Global";
 import RamaniHuria from "../preprocessor/RamaniHuria";
+import PDC from "../preprocessor/PDC";
 import DummyProject from "../preprocessor/DummyProject";
 import Writer from "../utils/Writer";
 
@@ -45,8 +46,14 @@ class Preprocess {
       for (let i = 0; i < projectsFromAPI.length; i++) {
         switch (dataFromAPI["projectNames"][projectsFromAPI[i][projectName]]) {
           case "ramanihuria":
-            project = new RamaniHuria(dataFromAPI.ramanihuria);
+            project = new RamaniHuria(dataFromAPI.ramanihuria, 'ramanihuria');
+            console.log('ramanihuria')
             dataFromAPI.ramanihuria = project.process();
+            break;
+          case "pdc":
+            project = new PDC(dataFromAPI.pdc, 'pdc');
+            console.log('pdc')
+            dataFromAPI.pdc = project.process();
             break;
           case "dummyproject":
             project = new DummyProject(dataFromAPI.dummyproject);

@@ -2,7 +2,7 @@ import preProcessingService from "../preprocessor/PreProcessor";
 import Global from "../preprocessor/Global";
 import RamaniHuria from "../preprocessor/RamaniHuria";
 import PDC from "../preprocessor/PDC";
-import DummyProject from "../preprocessor/DummyProject";
+import OpenCitiesAccra from "../preprocessor/OpenCitiesAccra";
 import Writer from "../utils/Writer";
 
 // This is used to call the Writer anywhere (it's used to post data to the AWS bucket)
@@ -55,9 +55,10 @@ class Preprocess {
             console.log('pdc')
             dataFromAPI.pdc = project.process();
             break;
-          case "dummyproject":
-            project = new DummyProject(dataFromAPI.dummyproject);
-            dataFromAPI.dummyproject = project.process();
+          case "opencitiesaccra":
+            project = new OpenCitiesAccra(dataFromAPI.opencitiesaccra, 'opencitiesaccra');
+            console.log('opencitiesaccra')
+            dataFromAPI.opencitiesaccra = project.process();
             break;
           default:
             break;

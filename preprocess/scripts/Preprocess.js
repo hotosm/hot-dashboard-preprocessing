@@ -2,6 +2,7 @@ import preProcessingService from "../preprocessor/PreProcessor";
 import Global from "../preprocessor/Global";
 import RamaniHuria from "../preprocessor/RamaniHuria";
 import PDC from "../preprocessor/PDC";
+import OpenCitiesAccra from "../preprocessor/OpenCitiesAccra";
 import DummyProject from "../preprocessor/DummyProject";
 import Writer from "../utils/Writer";
 
@@ -54,6 +55,11 @@ class Preprocess {
             project = new PDC(dataFromAPI.pdc, 'pdc');
             console.log('pdc')
             dataFromAPI.pdc = project.process();
+            break;
+          case "opencitiesaccra":
+            project = new OpenCitiesAccra(dataFromAPI.opencitiesaccra, 'opencitiesaccra');
+            console.log('opencitiesaccra')
+            dataFromAPI.opencitiesaccra = project.process();
             break;
           case "dummyproject":
             project = new DummyProject(dataFromAPI.dummyproject);

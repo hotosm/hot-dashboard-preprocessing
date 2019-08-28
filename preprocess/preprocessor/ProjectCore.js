@@ -487,9 +487,9 @@ class ProjectCore extends AbstractProject {
    */
   getNbTrainings(data) {
     console.log('getNbTrainings')
-    if (data.capacitybuilding.hasOwnProperty('nbTrainings')) {
+    if (data.capacitybuilding.hasOwnProperty('nbtrainings')) {
       // The number of trainings is only the number of line of the data
-      data.capacitybuilding["nbTrainings"] = {
+      data.capacitybuilding["nbtrainings"] = {
         title: data.capacitybuilding.nbtrainings.title,
         value: data.capacitybuilding.nbtrainings.data.length
       };
@@ -507,7 +507,7 @@ class ProjectCore extends AbstractProject {
    */
   getNbEvents(data) {
     console.log('getNbEvents')
-    if (data.community.hasOwnProperty('nbEvents')) {
+    if (data.community.hasOwnProperty('nbevents')) {
       data.community["nbEvents"] = {
         title: data.community.nbevents.title,
         value: data.community.nbevents.data.filter(row => row["No."] !== "").length

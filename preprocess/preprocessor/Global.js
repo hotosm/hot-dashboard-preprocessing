@@ -263,37 +263,36 @@ class Global extends AbstractProject{
             console.log(' data[projectName][subProject]: ',  data[projectName][subProject])
             let divisionKeys = data[projectName][subProject].nbAttendeesTraining;
             console.log('divisionKeys: ', divisionKeys)
-            if (divisionKeys.data){
+            if (divisionKeys){
               let divisionData = divisionKeys.data;
-            let exist = false;
-            // This loop is here to add the row in the right array cell in order to have a descending order
-            for (let k = 0; k < divisionData.length; k++) {
-              for (let l = 0; l < nbAttendeesData.length && !exist; l++) {
-                // If the institution of the current row is the same
-                if (divisionData.extend === nbAttendeesData[l].extend) {
-                  nbAttendeesData[l].value += divisionData[k].value;
-                  exist = true;
+              let exist = false;
+              // This loop is here to add the row in the right array cell in order to have a descending order
+              for (let k = 0; k < divisionData.length; k++) {
+                for (let l = 0; l < nbAttendeesData.length && !exist; l++) {
+                  // If the institution of the current row is the same
+                  if (divisionData.extend === nbAttendeesData[l].extend) {
+                    nbAttendeesData[l].value += divisionData[k].value;
+                    exist = true;
+                  }
+                }
+                // Otherwise, the current row is lower (older) than the last item of the array
+                if (!exist) {
+                  nbAttendeesData.push({
+                    extend: divisionData[k].extend,
+                    label: divisionData[k].label,
+                    value : divisionData[k].value
+                  });
+                }
+                else {
+                  exist = false;
                 }
               }
-              // Otherwise, the current row is lower (older) than the last item of the array
-              if (!exist) {
-                nbAttendeesData.push({
-                  extend: divisionData[k].extend,
-                  label: divisionData[k].label,
-                  value : divisionData[k].value
-                });
-              }
-              else {
-                exist = false;
-              }
+              totalNbAttendeesTraining = {
+                title: divisionKeys.title,
+                data: nbAttendeesData
+              };
             }
-            totalNbAttendeesTraining = {
-              title: divisionKeys.title,
-              data: nbAttendeesData
-            };
           }
-            }
-            
         }
       }
     }

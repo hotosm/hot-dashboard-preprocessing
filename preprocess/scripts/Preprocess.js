@@ -1,10 +1,10 @@
-import preProcessingService from "../preprocessor/PreProcessor";
-import Global from "../preprocessor/Global";
-import RamaniHuria from "../preprocessor/RamaniHuria";
-import PDC from "../preprocessor/PDC";
-import OpenCitiesAccra from "../preprocessor/OpenCitiesAccra";
-import Rollup from "../preprocessor/Rollup";
-import Writer from "../utils/Writer";
+import preProcessingService from '../preprocessor/PreProcessor';
+import Global from '../preprocessor/Global';
+import RamaniHuria from '../preprocessor/RamaniHuria';
+import PDC from '../preprocessor/PDC';
+import OpenCitiesAccra from '../preprocessor/OpenCitiesAccra';
+import Rollup from '../preprocessor/Rollup';
+import Writer from '../utils/Writer';
 
 // This is used to call the Writer anywhere (it's used to post data to the AWS bucket)
 const writer = new Writer();
@@ -15,7 +15,7 @@ class Preprocess {
   }
 
   async process() {
-    const projectName = "project name";
+    const projectName = 'project name';
     let projectsFromAPI = [];
     let dataFromAPI = {
       projectNames: {}
@@ -23,8 +23,7 @@ class Preprocess {
 
     //  1. Get the projects
     try {
-      projectsFromAPI = await
-        this.preProcessingService.getProjectsFromAPI();
+      projectsFromAPI = await this.preProcessingService.getProjectsFromAPI();
     } catch (e) {
       console.error('preProcessing projects error', e);
     }
@@ -32,38 +31,41 @@ class Preprocess {
     try {
       for (let i = 0; i < projectsFromAPI.length; i++) {
         // Because some project name have spaces, we would remove them in order to get acces easily to the data
-        dataFromAPI.projectNames[projectsFromAPI[i][projectName]] = projectsFromAPI[i][projectName].toLowerCase().replace(/\s+/g, '');
+        dataFromAPI.projectNames[projectsFromAPI[i][projectName]] = projectsFromAPI[i][projectName]
+          .toLowerCase()
+          .replace(/\s+/g, '');
         // https://stackoverflow.com/questions/5964373/is-there-a-difference-between-s-g-and-s-g
-        dataFromAPI[projectsFromAPI[i][projectName].toLowerCase().replace(/\s+/g, '')] = await
-            this.preProcessingService.getDataFromProjects(projectsFromAPI, i);
+        dataFromAPI[
+          projectsFromAPI[i][projectName].toLowerCase().replace(/\s+/g, '')
+        ] = await this.preProcessingService.getDataFromProjects(projectsFromAPI, i);
       }
     } catch (e) {
-      console.error('preProcessing data error', e)
+      console.error('preProcessing data error', e);
     }
 
     // 3. Data processing
     try {
       let project = {};
       for (let i = 0; i < projectsFromAPI.length; i++) {
-        switch (dataFromAPI["projectNames"][projectsFromAPI[i][projectName]]) {
-          case "ramanihuria":
+        switch (dataFromAPI.projectNames[projectsFromAPI[i][projectName]]) {
+          case 'ramanihuria':
             project = new RamaniHuria(dataFromAPI.ramanihuria, 'ramanihuria');
-            console.log('ramanihuria')
+            console.log('ramanihuria');
             dataFromAPI.ramanihuria = project.process();
             break;
-          case "pdc":
+          case 'pdc':
             project = new PDC(dataFromAPI.pdc, 'pdc');
-            console.log('pdc')
+            console.log('pdc');
             dataFromAPI.pdc = project.process();
             break;
-          case "opencitiesaccra":
+          case 'opencitiesaccra':
             project = new OpenCitiesAccra(dataFromAPI.opencitiesaccra, 'opencitiesaccra');
-            console.log('opencitiesaccra')
+            console.log('opencitiesaccra');
             dataFromAPI.opencitiesaccra = project.process();
             break;
-          case "rollup":
+          case 'rollup':
             project = new Rollup(dataFromAPI.rollup, 'rollup');
-            console.log('rollup')
+            console.log('rollup');
             dataFromAPI.rollup = project.process();
           default:
             break;
@@ -72,15 +74,14 @@ class Preprocess {
       project = new Global(dataFromAPI);
       dataFromAPI = project.process();
     } catch (e) {
-      console.error('preProcessing data error', e)
+      console.error('preProcessing data error', e);
     }
 
     // 4. Json saving in the bucket Amazon
     try {
       writer.setJson(dataFromAPI);
-    }
-    catch (e) {
-      console.error('Writing the json file failed', e)
+    } catch (e) {
+      console.error('Writing the json file failed', e);
     }
   }
 }
@@ -94,9 +95,8 @@ class Preprocess {
 exports.default = function(event, context, callback) {
   try {
     new Preprocess().process();
-    callback(null, "The file rawdata.json was sucessfully updated !");
-  }
-  catch (e) {
-    console.error("There was an error during the execution of the lambda function", e)
+    callback(null, 'The file rawdata.json was sucessfully updated !');
+  } catch (e) {
+    console.error('There was an error during the execution of the lambda function', e);
   }
 };

@@ -1,20 +1,20 @@
-import AbstractProject from "./AbstractProject"
+import AbstractProject from './AbstractProject';
 
 // This class is the processing the data for the Global project
-class Global extends AbstractProject{
+class Global extends AbstractProject {
   constructor(generalData) {
     super(generalData);
-    this.functions.push("getTotalSubwards");
-    this.functions.push("getTotalOrganizationsSupported");
-    this.functions.push("getTotalNbAttendeesMonthly");
-    this.functions.push("getTotalNbAttendeesInstitutions");
-    this.functions.push("getTotalNbAttendeesTraining");
-    this.functions.push("getTotalNbWorkshopsMonthly");
-    this.functions.push("getTotalNbTrainings");
-    this.functions.push("getTotalNbParticipantsGender");
-    this.functions.push("getTotalNbParticipantsNew");
-    this.functions.push("getTotalNbParticipantsType");
-    this.functions.push("getTotalNbEvents");
+    this.functions.push('getTotalSubwards');
+    this.functions.push('getTotalOrganizationsSupported');
+    this.functions.push('getTotalNbAttendeesMonthly');
+    this.functions.push('getTotalNbAttendeesInstitutions');
+    this.functions.push('getTotalNbAttendeesTraining');
+    this.functions.push('getTotalNbWorkshopsMonthly');
+    this.functions.push('getTotalNbTrainings');
+    this.functions.push('getTotalNbParticipantsGender');
+    this.functions.push('getTotalNbParticipantsNew');
+    this.functions.push('getTotalNbParticipantsType');
+    this.functions.push('getTotalNbEvents');
   }
 
   /**
@@ -23,32 +23,34 @@ class Global extends AbstractProject{
    * @returns {*}
    */
   getTotalSubwards(data) {
-    console.log('getTotalSubwards')
+    console.log('getTotalSubwards');
     let totalSubwardsCompleted = {};
-    let projectName = "";
+    let projectName = '';
     let subwardsData = [];
-    //We're going through every project except global which is this one
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      console.log('projectName: ', projectName)
-      if (projectName !== "global") {
+      console.log('projectName: ', projectName);
+      if (projectName !== 'global') {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
+          const subProject = Object.keys(data[projectName])[j];
           // In order to add the data, every project must have the same key name
-          if (Object.keys(data[projectName][subProject]).includes("nbSubwardsCompleted")) {
-            let divisionKeys = data[projectName].mapping.nbSubwardsCompleted;
-            let divisionData = divisionKeys.data;
+          if (Object.keys(data[projectName][subProject]).includes('nbSubwardsCompleted')) {
+            const divisionKeys = data[projectName].mapping.nbSubwardsCompleted;
+            const divisionData = divisionKeys.data;
             let exist = false;
             // This loop is here to add the row in the right array cell in order to have a descending order
             for (let k = 0; k < divisionData.length; k++) {
-              let divisionDate = divisionData[k].date;
+              const divisionDate = divisionData[k].date;
               for (let l = 0; l < subwardsData.length && !exist; l++) {
                 // If the date of the current row is greater (newer) than the item in the array
-                if (divisionDate.getFullYear() > subwardsData[l].date.getFullYear() ||
-                    (divisionDate.getMonth() > subwardsData[l].date.getFullYear() &&
-                        subwardsData[l].date.getFullYear() === divisionDate.getFullYear())) {
+                if (
+                  divisionDate.getFullYear() > subwardsData[l].date.getFullYear() ||
+                  (divisionDate.getMonth() > subwardsData[l].date.getFullYear() &&
+                    subwardsData[l].date.getFullYear() === divisionDate.getFullYear())
+                ) {
                   // We create a temp value to store the data in order to not modify it when whe add them
-                  let subwardTemp = {
+                  const subwardTemp = {
                     extend: divisionData[k].extend,
                     label: divisionData[k].label,
                     date: divisionData[k].date,
@@ -62,8 +64,10 @@ class Global extends AbstractProject{
                   exist = true;
                 }
                 // If the date of the current row is equal to the date of the item in the array
-                else if (divisionDate.getMonth() === subwardsData[l].date.getMonth() &&
-                    divisionDate.getFullYear() === subwardsData[l].date.getFullYear()) {
+                else if (
+                  divisionDate.getMonth() === subwardsData[l].date.getMonth() &&
+                  divisionDate.getFullYear() === subwardsData[l].date.getFullYear()
+                ) {
                   subwardsData[l].value += divisionData[k].value;
                   exist = true;
                 }
@@ -76,8 +80,7 @@ class Global extends AbstractProject{
                   date: divisionData[k].date,
                   value: divisionData[k].value
                 });
-              }
-              else {
+              } else {
                 exist = false;
               }
             }
@@ -85,13 +88,13 @@ class Global extends AbstractProject{
               title: divisionKeys.title,
               data: subwardsData
             };
-            console.log('totalSubwardsCompleted: ', totalSubwardsCompleted)
+            console.log('totalSubwardsCompleted: ', totalSubwardsCompleted);
           }
         }
       }
     }
     // We finally append the data to the object
-    data.global.main["totalSubwardsCompleted"] = totalSubwardsCompleted;
+    data.global.main.totalSubwardsCompleted = totalSubwardsCompleted;
     return data;
   }
 
@@ -102,21 +105,22 @@ class Global extends AbstractProject{
    */
   getTotalOrganizationsSupported(data) {
     let totalOrganizationsSupported = 0;
-    let projectName = "";
-    //We're going through every project except global which is this one
+    let projectName = '';
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("nborganizations")) {
-            totalOrganizationsSupported += data[projectName][subProject].nborganizations.data.length;
+          const subProject = Object.keys(data[projectName])[j];
+          if (Object.keys(data[projectName][subProject]).includes('nborganizations')) {
+            totalOrganizationsSupported +=
+              data[projectName][subProject].nborganizations.data.length;
           }
         }
       }
     }
-    data.global.main["totalOrganizationsSupported"] = {
-      title: "Number of organizations supported",
+    data.global.main.totalOrganizationsSupported = {
+      title: 'Number of organizations supported',
       value: totalOrganizationsSupported
     };
     return data;
@@ -129,28 +133,30 @@ class Global extends AbstractProject{
    */
   getTotalNbAttendeesMonthly(data) {
     let totalNbAttendeesMonthly = {};
-    let projectName = "";
+    let projectName = '';
     let nbAttendeesData = [];
-    //We're going through every project except global which is this one
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("nbAttendeesMonthly")) {
-            let divisionKeys = data[projectName][subProject].nbAttendeesMonthly;
-            let divisionData = divisionKeys.data;
+          const subProject = Object.keys(data[projectName])[j];
+          if (Object.keys(data[projectName][subProject]).includes('nbAttendeesMonthly')) {
+            const divisionKeys = data[projectName][subProject].nbAttendeesMonthly;
+            const divisionData = divisionKeys.data;
             let exist = false;
             // This loop is here to add the row in the right array cell in order to have a descending order
             for (let k = 0; k < divisionData.length; k++) {
-              let divisionDate = divisionData[k].date;
+              const divisionDate = divisionData[k].date;
               for (let l = 0; l < nbAttendeesData.length && !exist; l++) {
                 // If the date of the current row is greater (newer) than the item in the array
-                if (divisionDate.getFullYear() > nbAttendeesData[l].date.getFullYear() ||
-                    (divisionDate.getMonth() > nbAttendeesData[l].date.getFullYear() &&
-                        nbAttendeesData[l].date.getFullYear() === divisionDate.getFullYear())) {
-                  let nbAttendeesTemp = {
-                    label : divisionData[k].label,
+                if (
+                  divisionDate.getFullYear() > nbAttendeesData[l].date.getFullYear() ||
+                  (divisionDate.getMonth() > nbAttendeesData[l].date.getFullYear() &&
+                    nbAttendeesData[l].date.getFullYear() === divisionDate.getFullYear())
+                ) {
+                  const nbAttendeesTemp = {
+                    label: divisionData[k].label,
                     date: divisionData[k].date,
                     value: divisionData[k].value
                   };
@@ -162,8 +168,10 @@ class Global extends AbstractProject{
                   exist = true;
                 }
                 // If the date of the current row is equal to the date of the item in the array
-                else if (divisionDate.getMonth() === nbAttendeesData[l].date.getMonth() &&
-                    divisionDate.getFullYear() === nbAttendeesData[l].date.getFullYear()) {
+                else if (
+                  divisionDate.getMonth() === nbAttendeesData[l].date.getMonth() &&
+                  divisionDate.getFullYear() === nbAttendeesData[l].date.getFullYear()
+                ) {
                   nbAttendeesData[l].value += divisionData[k].value;
                   exist = true;
                 }
@@ -171,12 +179,11 @@ class Global extends AbstractProject{
               // Otherwise, the current row is lower (older) than the last item of the array
               if (!exist) {
                 nbAttendeesData.push({
-                  label : divisionData[k].label,
+                  label: divisionData[k].label,
                   date: divisionData[k].date,
                   value: divisionData[k].value
                 });
-              }
-              else {
+              } else {
                 exist = false;
               }
             }
@@ -188,7 +195,7 @@ class Global extends AbstractProject{
         }
       }
     }
-    data.global.main["totalNbAttendeesMonthly"] = totalNbAttendeesMonthly;
+    data.global.main.totalNbAttendeesMonthly = totalNbAttendeesMonthly;
     return data;
   }
 
@@ -199,17 +206,17 @@ class Global extends AbstractProject{
    */
   getTotalNbAttendeesInstitutions(data) {
     let totalNbAttendeesInstitutions = {};
-    let projectName = "";
-    let nbAttendeesData = [];
-    //We're going through every project except global which is this one
+    let projectName = '';
+    const nbAttendeesData = [];
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("nbAttendeesInstitutions")) {
-            let divisionKeys = data[projectName][subProject].nbAttendeesInstitutions;
-            let divisionData = divisionKeys.data;
+          const subProject = Object.keys(data[projectName])[j];
+          if (Object.keys(data[projectName][subProject]).includes('nbAttendeesInstitutions')) {
+            const divisionKeys = data[projectName][subProject].nbAttendeesInstitutions;
+            const divisionData = divisionKeys.data;
             let exist = false;
             // This loop is here to add the row in the right array cell in order to have a descending order
             for (let k = 0; k < divisionData.length; k++) {
@@ -225,10 +232,9 @@ class Global extends AbstractProject{
                 nbAttendeesData.push({
                   extend: divisionData[k].extend,
                   label: divisionData[k].label,
-                  value : divisionData[k].value
+                  value: divisionData[k].value
                 });
-              }
-              else {
+              } else {
                 exist = false;
               }
             }
@@ -240,7 +246,7 @@ class Global extends AbstractProject{
         }
       }
     }
-    data.global.main["totalNbAttendeesInstitutions"] = totalNbAttendeesInstitutions;
+    data.global.main.totalNbAttendeesInstitutions = totalNbAttendeesInstitutions;
     return data;
   }
 
@@ -251,20 +257,20 @@ class Global extends AbstractProject{
    */
   getTotalNbAttendeesTraining(data) {
     let totalNbAttendeesTraining = {};
-    let projectName = "";
-    let nbAttendeesData = [];
-    //We're going through every project except global which is this one
+    let projectName = '';
+    const nbAttendeesData = [];
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("nbAttendeesTraining")) {
-            console.log(' data[projectName][subProject]: ',  data[projectName][subProject])
-            let divisionKeys = data[projectName][subProject].nbAttendeesTraining;
-            console.log('divisionKeys: ', divisionKeys)
-            if (divisionKeys){
-              let divisionData = divisionKeys.data;
+          const subProject = Object.keys(data[projectName])[j];
+          if (Object.keys(data[projectName][subProject]).includes('nbAttendeesTraining')) {
+            console.log(' data[projectName][subProject]: ', data[projectName][subProject]);
+            const divisionKeys = data[projectName][subProject].nbAttendeesTraining;
+            console.log('divisionKeys: ', divisionKeys);
+            if (divisionKeys) {
+              const divisionData = divisionKeys.data;
               let exist = false;
               // This loop is here to add the row in the right array cell in order to have a descending order
               for (let k = 0; k < divisionData.length; k++) {
@@ -280,10 +286,9 @@ class Global extends AbstractProject{
                   nbAttendeesData.push({
                     extend: divisionData[k].extend,
                     label: divisionData[k].label,
-                    value : divisionData[k].value
+                    value: divisionData[k].value
                   });
-                }
-                else {
+                } else {
                   exist = false;
                 }
               }
@@ -296,7 +301,7 @@ class Global extends AbstractProject{
         }
       }
     }
-    data.global.main["totalNbAttendeesTraining"] = totalNbAttendeesTraining;
+    data.global.main.totalNbAttendeesTraining = totalNbAttendeesTraining;
     return data;
   }
 
@@ -307,27 +312,29 @@ class Global extends AbstractProject{
    */
   getTotalNbWorkshopsMonthly(data) {
     let totalNbWorkshopsMonthly = {};
-    let projectName = "";
+    let projectName = '';
     let nbWorkshopsMonthlyData = [];
-    //We're going through every project except global which is this one
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("nbWorkshopsMonthly")) {
-            let divisionKeys = data[projectName][subProject].nbWorkshopsMonthly;
-            let divisionData = divisionKeys.data;
+          const subProject = Object.keys(data[projectName])[j];
+          if (Object.keys(data[projectName][subProject]).includes('nbWorkshopsMonthly')) {
+            const divisionKeys = data[projectName][subProject].nbWorkshopsMonthly;
+            const divisionData = divisionKeys.data;
             let exist = false;
             // This loop is here to add the row in the right array cell in order to have a descending order
             for (let k = 0; k < divisionData.length; k++) {
-              let divisionDate = divisionData[k].date;
+              const divisionDate = divisionData[k].date;
               for (let l = 0; l < nbWorkshopsMonthlyData.length && !exist; l++) {
                 // If the date of the current row is greater (newer) than the item in the array
-                if (divisionDate.getFullYear() > nbWorkshopsMonthlyData[l].date.getFullYear() ||
-                    (divisionDate.getMonth() > nbWorkshopsMonthlyData[l].date.getFullYear() &&
-                        nbWorkshopsMonthlyData[l].date.getFullYear() === divisionDate.getFullYear())) {
-                  let nbWorkshopTemp = {
+                if (
+                  divisionDate.getFullYear() > nbWorkshopsMonthlyData[l].date.getFullYear() ||
+                  (divisionDate.getMonth() > nbWorkshopsMonthlyData[l].date.getFullYear() &&
+                    nbWorkshopsMonthlyData[l].date.getFullYear() === divisionDate.getFullYear())
+                ) {
+                  const nbWorkshopTemp = {
                     date: divisionData[k].date,
                     label: divisionData[k].label,
                     value: divisionData[k].value
@@ -340,8 +347,10 @@ class Global extends AbstractProject{
                   exist = true;
                 }
                 // If the date of the current row is equal to the date of the item in the array
-                else if (divisionDate.getMonth() === nbWorkshopsMonthlyData[l].date.getMonth() &&
-                    divisionDate.getFullYear() === nbWorkshopsMonthlyData[l].date.getFullYear()) {
+                else if (
+                  divisionDate.getMonth() === nbWorkshopsMonthlyData[l].date.getMonth() &&
+                  divisionDate.getFullYear() === nbWorkshopsMonthlyData[l].date.getFullYear()
+                ) {
                   nbWorkshopsMonthlyData[l].value += divisionData[k].value;
                   exist = true;
                 }
@@ -353,8 +362,7 @@ class Global extends AbstractProject{
                   label: divisionData[k].label,
                   value: divisionData[k].value
                 });
-              }
-              else {
+              } else {
                 exist = false;
               }
             }
@@ -366,7 +374,7 @@ class Global extends AbstractProject{
         }
       }
     }
-    data.global.main["totalNbWorkshopsMonthly"] = totalNbWorkshopsMonthly;
+    data.global.main.totalNbWorkshopsMonthly = totalNbWorkshopsMonthly;
     return data;
   }
 
@@ -377,25 +385,25 @@ class Global extends AbstractProject{
    */
   getTotalNbTrainings(data) {
     let totalNbTrainings = 0;
-    let title = "";
-    let projectName = "";
-    //We're going through every project except global which is this one
+    let title = '';
+    let projectName = '';
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
-          let subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("nbTrainings")) {
+          const subProject = Object.keys(data[projectName])[j];
+          if (Object.keys(data[projectName][subProject]).includes('nbTrainings')) {
             totalNbTrainings += data[projectName][subProject].nbTrainings.value;
             title = data[projectName][subProject].nbTrainings.title;
           }
         }
       }
     }
-    data.global.main["totalNbTrainings"] = {
-      title: title,
+    data.global.main.totalNbTrainings = {
+      title,
       value: totalNbTrainings
-    };;
+    };
     return data;
   }
 
@@ -406,26 +414,28 @@ class Global extends AbstractProject{
    */
   getTotalNbParticipantsGender(data) {
     let totalNbParticipants = {};
-    let projectName = "";
+    let projectName = '';
     let nbParticipantsData = [];
-    //We're going through every project except global which is this one
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         // Because we know that this kind of data is displayed in the category "community"
-        if (Object.keys(data[projectName].community).includes("nbParticipantsGender")) {
-          let divisionKeys = data[projectName].community.nbParticipantsGender;
-          let divisionData = divisionKeys.data;
+        if (Object.keys(data[projectName].community).includes('nbParticipantsGender')) {
+          const divisionKeys = data[projectName].community.nbParticipantsGender;
+          const divisionData = divisionKeys.data;
           let exist = false;
           // This loop is here to add the row in the right array cell in order to have a descending order
           for (let k = 0; k < divisionData.length; k++) {
-            let divisionDate = divisionData[k].date;
+            const divisionDate = divisionData[k].date;
             for (let l = 0; l < nbParticipantsData.length && !exist; l++) {
               // If the date of the current row is greater (newer) than the item in the array
-              if (divisionDate.getFullYear() > nbParticipantsData[l].date.getFullYear() ||
-                  (divisionDate.getMonth() > nbParticipantsData[l].date.getFullYear() &&
-                      nbParticipantsData[l].date.getFullYear() === divisionDate.getFullYear())) {
-                let nbParticipantsTemp = {
+              if (
+                divisionDate.getFullYear() > nbParticipantsData[l].date.getFullYear() ||
+                (divisionDate.getMonth() > nbParticipantsData[l].date.getFullYear() &&
+                  nbParticipantsData[l].date.getFullYear() === divisionDate.getFullYear())
+              ) {
+                const nbParticipantsTemp = {
                   date: divisionData[k].date,
                   label: divisionData[k].label,
                   female: divisionData[k].female,
@@ -439,8 +449,10 @@ class Global extends AbstractProject{
                 exist = true;
               }
               // If the date of the current row is equal to the date of the item in the array
-              else if (divisionDate.getMonth() === nbParticipantsData[l].date.getMonth() &&
-                  divisionDate.getFullYear() === nbParticipantsData[l].date.getFullYear()) {
+              else if (
+                divisionDate.getMonth() === nbParticipantsData[l].date.getMonth() &&
+                divisionDate.getFullYear() === nbParticipantsData[l].date.getFullYear()
+              ) {
                 nbParticipantsData[l].female += divisionData[k].female;
                 nbParticipantsData[l].male += divisionData[k].male;
                 exist = true;
@@ -454,8 +466,7 @@ class Global extends AbstractProject{
                 female: divisionData[k].female,
                 male: divisionData[k].male
               });
-            }
-            else {
+            } else {
               exist = false;
             }
           }
@@ -466,37 +477,39 @@ class Global extends AbstractProject{
         }
       }
     }
-    data.global.main["totalNbParticipantsGender"] = totalNbParticipants;
+    data.global.main.totalNbParticipantsGender = totalNbParticipants;
     return data;
   }
 
-/**
+  /**
    * Get the number of participants by month (old/new)
    * @param data - the data fetched by the reader
    * @returns {*}
    */
   getTotalNbParticipantsNew(data) {
     let totalNbParticipants = {};
-    let projectName = "";
+    let projectName = '';
     let nbParticipantsData = [];
-    //We're going through every project except global which is this one
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         // Because we know that this kind of data is displayed in the category "community"
-        if (Object.keys(data[projectName].community).includes("nbParticipantsNew")) {
-          let divisionKeys = data[projectName].community.nbParticipantsNew;
-          let divisionData = divisionKeys.data;
+        if (Object.keys(data[projectName].community).includes('nbParticipantsNew')) {
+          const divisionKeys = data[projectName].community.nbParticipantsNew;
+          const divisionData = divisionKeys.data;
           let exist = false;
           // This loop is here to add the row in the right array cell in order to have a descending order
           for (let k = 0; k < divisionData.length; k++) {
-            let divisionDate = divisionData[k].date;
+            const divisionDate = divisionData[k].date;
             for (let l = 0; l < nbParticipantsData.length && !exist; l++) {
               // If the date of the current row is greater (newer) than the item in the array
-              if (divisionDate.getFullYear() > nbParticipantsData[l].date.getFullYear() ||
-                  (divisionDate.getMonth() > nbParticipantsData[l].date.getFullYear() &&
-                      nbParticipantsData[l].date.getFullYear() === divisionDate.getFullYear())) {
-                let nbParticipantTemp = {
+              if (
+                divisionDate.getFullYear() > nbParticipantsData[l].date.getFullYear() ||
+                (divisionDate.getMonth() > nbParticipantsData[l].date.getFullYear() &&
+                  nbParticipantsData[l].date.getFullYear() === divisionDate.getFullYear())
+              ) {
+                const nbParticipantTemp = {
                   date: divisionData[k].date,
                   label: divisionData[k].label,
                   new: divisionData[k].new,
@@ -510,8 +523,10 @@ class Global extends AbstractProject{
                 exist = true;
               }
               // If the date of the current row is equal to the date of the item in the array
-              else if (divisionDate.getMonth() === nbParticipantsData[l].date.getMonth() &&
-                  divisionDate.getFullYear() === nbParticipantsData[l].date.getFullYear()) {
+              else if (
+                divisionDate.getMonth() === nbParticipantsData[l].date.getMonth() &&
+                divisionDate.getFullYear() === nbParticipantsData[l].date.getFullYear()
+              ) {
                 nbParticipantsData[l].new += divisionData[k].new;
                 nbParticipantsData[l].old += divisionData[k].old;
                 exist = true;
@@ -525,8 +540,7 @@ class Global extends AbstractProject{
                 new: divisionData[k].new,
                 old: divisionData[k].old
               });
-            }
-            else {
+            } else {
               exist = false;
             }
           }
@@ -537,7 +551,7 @@ class Global extends AbstractProject{
         }
       }
     }
-    data.global.main["totalNbParticipantsNew"] = totalNbParticipants;
+    data.global.main.totalNbParticipantsNew = totalNbParticipants;
     return data;
   }
 
@@ -548,16 +562,16 @@ class Global extends AbstractProject{
    */
   getTotalNbParticipantsType(data) {
     let totalNbParticipants = {};
-    let projectName = "";
-    let nbParticipantsData = [];
-    //We're going through every project except global which is this one
+    let projectName = '';
+    const nbParticipantsData = [];
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         // Because we know that this kind of data is displayed in the category "community"
-        if (Object.keys(data[projectName].community).includes("nbParticipantsType")) {
-          let divisionKeys = data[projectName].community.nbParticipantsType;
-          let divisionData = divisionKeys.data;
+        if (Object.keys(data[projectName].community).includes('nbParticipantsType')) {
+          const divisionKeys = data[projectName].community.nbParticipantsType;
+          const divisionData = divisionKeys.data;
           let exist = false;
           // This loop is here to add the row in the right array cell in order to have a descending order
           for (let k = 0; k < divisionData.length; k++) {
@@ -574,8 +588,7 @@ class Global extends AbstractProject{
                 label: divisionData[k].label,
                 value: divisionData[k].value
               });
-            }
-            else {
+            } else {
               exist = false;
             }
           }
@@ -586,7 +599,7 @@ class Global extends AbstractProject{
         }
       }
     }
-    data.global.main["totalNbParticipantsType"] = totalNbParticipants;
+    data.global.main.totalNbParticipantsType = totalNbParticipants;
     return data;
   }
 
@@ -597,24 +610,24 @@ class Global extends AbstractProject{
    */
   getTotalNbEvents(data) {
     let totalEdits = 0;
-    let title = "";
-    let projectName = "";
-    let subProject = "";
-    //We're going through every project except global which is this one
+    let title = '';
+    let projectName = '';
+    let subProject = '';
+    // We're going through every project except global which is this one
     for (let i = 0; i < Object.keys(data.projectNames).length; i++) {
       projectName = Object.values(data.projectNames)[i];
-      if (projectName !== "global") {
+      if (projectName !== 'global') {
         for (let j = 0; j < Object.keys(data[projectName]).length; j++) {
           subProject = Object.keys(data[projectName])[j];
-          if (Object.keys(data[projectName][subProject]).includes("nbEvents")) {
+          if (Object.keys(data[projectName][subProject]).includes('nbEvents')) {
             totalEdits += data[projectName][subProject].nbEvents.value;
             title = data[projectName][subProject].nbEvents.title;
           }
         }
       }
     }
-    data.global.main["totalNbEvents"] = {
-      title: title,
+    data.global.main.totalNbEvents = {
+      title,
       value: totalEdits
     };
     return data;

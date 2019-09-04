@@ -8,7 +8,8 @@
     "react": "^16.4.2",
     "react-buttons": "0.0.11",
     "react-dom": "^16.4.2",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "request": "^2.88.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -16,10 +17,20 @@
     "build:preprocess": "babel preprocess -d dist-preprocess",
     "run:preprocess": "node dist-preprocess/scripts/Preprocess.js",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "check-lint": "eslint ."
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-plugin-transform-async-functions": "^6.22.0"
+    "babel-plugin-transform-async-functions": "^6.22.0",
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.2.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "prettier": "^1.18.2"
   }
 }

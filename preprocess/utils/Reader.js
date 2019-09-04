@@ -1,10 +1,11 @@
-import Baby    from 'babyparse';
+import Baby from 'babyparse';
 import request from 'request';
 
 class Reader {
   constructor() {
-    this.getCsv   = this.getCsv.bind(this);
-    this.getJson   = this.getJson.bind(this);
+    this.getCsv = this.getCsv.bind(this);
+    this.getJson = this.getJson.bind(this);
+    this.getAPI = this.getAPI.bind(this);
   }
 
   /**
@@ -14,25 +15,22 @@ class Reader {
    */
   getCsv(uri, callback) {
     return new Promise((resolve, reject) => {
-      request(
-          {uri: uri},
-          function(err, data){
-            Baby.parse(data.body, {
-              download      : false,
-              header        : true,
-              dynamicTyping : true,
-              complete      : (results) => {
-                resolve(callback(results));
-              },
-              error         : (error) => {
-                reject(error);
-              }
-            });
-            if(err !== null){
-              console.error(err);
-            }
+      request({ uri: uri }, function(err, data) {
+        Baby.parse(data.body, {
+          download: false,
+          header: true,
+          dynamicTyping: true,
+          complete: results => {
+            resolve(callback(results));
+          },
+          error: error => {
+            reject(error);
           }
-      );
+        });
+        if (err !== null) {
+          console.error(err);
+        }
+      });
     });
   }
 
@@ -44,45 +42,40 @@ class Reader {
    * @returns {*}
    */
   getJson(configUrl, configName) {
-    if(configUrl) {
+    if (configUrl) {
       return new Promise((resolve, reject) => {
-        request(
-            {url: configUrl},
-            function(err, data){
-              if(err !== null){
-                console.error(err);
-                reject(err);
-              }
-              else {
-                resolve(data.body);
-              }
-            }
-        )
-      })
-          .then((findResponse) => {
-            return this.getPropByString(findResponse, configName)
-          });
+        request({ url: configUrl }, function(err, data) {
+          if (err !== null) {
+            console.error(err);
+            reject(err);
+          } else {
+            resolve(data.body);
+          }
+        });
+      }).then(findResponse => {
+        return this.getPropByString(findResponse, configName);
+      });
     }
-    else {
-      return {};
-    }
+
+    return {};
   }
 
-  /** Get the property name in the new created array **/
-  /** https://stackoverflow.com/questions/6906108/in-javascript-how-can-i-dynamically-get-a-nested-property-of-an-object **/
-  getPropByString(object, propertyString) {  // propertyString  = name, name.lastname, etc..
-    if (!propertyString)
-      return null;
+  /** Get the property name in the new created array * */
+  /** https://stackoverflow.com/questions/6906108/in-javascript-how-can-i-dynamically-get-a-nested-property-of-an-object * */
+  getPropByString(object, propertyString) {
+    // propertyString  = name, name.lastname, etc..
+    if (!propertyString) return null;
 
     // Babyparse often returns a string instead of a JSON object
     if (typeof object === 'string') {
       object = JSON.parse(object);
     }
-    var prop, props = propertyString.split('.');
+    let prop;
+    var props = propertyString.split('.');
     for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
       prop = props[i];
 
-      var candidate = object[prop];
+      let candidate = object[prop];
       if (candidate !== undefined) {
         object = candidate;
       } else {
@@ -90,6 +83,22 @@ class Reader {
       }
     }
     return object[props[i]]; // return you value requested in the parameter "propertyString"
+  }
+
+  /**
+   * Get API data
+   */
+  getAPI(url, callback) {
+    return new Promise((resolve, reject) => {
+      request({ url: url }, function(err, data) {
+        if (err !== null) {
+          console.error(err);
+          reject(err);
+        } else {
+          resolve(data.body);
+        }
+      });
+    });
   }
 }
 

@@ -7,7 +7,7 @@ class AbstractProject {
       throw new TypeError('Abstract class "AbstractProject" cannot be instantiated directly.');
     }
     this.data = data;
-    this.functions = []
+    this.functions = [];
   }
 
   /**
@@ -15,8 +15,11 @@ class AbstractProject {
    * @returns {object} The data with the new attributes or just aggregated data
    */
   process() {
+    console.log('process: ', this);
+    console.log('process: ', this.functions.length);
     for (let i = 0; i < this.functions.length; i++) {
-      //Calls every function
+      // Calls every function
+      console.log('i: ', i, this.functions[i]);
       this[this.functions[i]](this.data);
     }
     return this.data;
